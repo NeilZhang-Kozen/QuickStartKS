@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:useLevel="false">
-    <solid android:color="@color/main1"/>
-        <corners android:bottomLeftRadius="35dp"
-            android:bottomRightRadius="35dp"/>
+    <gradient
+        android:angle="135"
+        android:startColor="@color/card_dark_start"
+        android:centerColor="@color/card_dark_mid"
+        android:endColor="@color/card_dark_end"
+        android:type="linear" />
+    <corners android:bottomLeftRadius="28dp"
+        android:bottomRightRadius="28dp"/>
 </shape>

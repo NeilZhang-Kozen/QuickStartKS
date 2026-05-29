@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/mp_blue"
     >
 
 <LinearLayout
@@ -13,7 +13,7 @@
     android:id="@+id/ll_amount"
     android:layout_centerVertical="true"
     android:layout_marginLeft="5px"
-    android:background="@drawable/bg_round_blue"
+    android:background="@drawable/bg_round_dark"
     android:orientation="vertical">
         <TextView
             android:id="@+id/title"
@@ -74,6 +74,6 @@
             android:text="@string/sub_trans_bank_wait"
             android:onClick="showPic"
             android:gravity="center_horizontal"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 </LinearLayout>
 </RelativeLayout>

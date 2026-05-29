@@ -149,13 +149,7 @@ public class EmvListenerImpl implements IEmvListener {
                         }
                     });
                 } else {
-//                        TPK
-
                     PinPadDialog dialog = new PinPadDialog(TransActivity.getInstance(), bundle, keyMode, keyIndex, new PinPadDialog.PinInputFinish() {
-//                        PinPadDialog dialog = new PinPadDialog(TransActivity.this, bundle, POIHsmManage.PED_PINBLOCK_FETCH_MODE_TPK, SESSION_PIN_KEY_AES_INDEX, new PinPadDialog.PinInputFinish() {
-
-                        //                        AES-DUKPT
-//                        PinPadAESDialog dialog = new PinPadAESDialog(TransActivity.this, bundle, PinPadAESDialog.PED_PINBLOCK_FETCH_MODE_DUKPT_AES, DUKPT_AES_PIN_KEY_256_INDEX, new PinPadAESDialog.PinInputFinish() {
                         @Override
                         public void onSuccess(byte[] pinBlock, byte[] pinKsn) {
                         }

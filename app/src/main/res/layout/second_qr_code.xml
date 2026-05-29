@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/mp_blue"
     >
 
 <LinearLayout
@@ -13,7 +13,7 @@
     android:id="@+id/ll_amount"
     android:layout_centerVertical="true"
     android:layout_marginLeft="5px"
-    android:background="@drawable/bg_round_blue"
+    android:background="@drawable/bg_round_dark"
     android:orientation="vertical">
         <TextView
             android:id="@+id/title"
@@ -72,7 +72,7 @@
             android:gravity="center_horizontal"
             android:onClick="showPic"
             android:text="@string/sub_trans_code_tip3"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="13px" />
 </LinearLayout>
 </RelativeLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_waiting"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingLeft="28dp"
+    android:paddingTop="28dp"
+    android:paddingRight="28dp"
+    android:paddingBottom="28dp">
+
+    <ProgressBar
+        android:id="@+id/progress_waiting"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/orange_solid" />
+
+    <TextView
+        android:id="@+id/tv_waiting_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:gravity="center"
+        android:text="@string/waiting_customer_operation"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:id="@+id/tv_waiting_subtitle"
+        android:gravity="center"
+        android:text="@string/header_secure_payment"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+</LinearLayout>

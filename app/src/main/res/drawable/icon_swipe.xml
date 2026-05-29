@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="110dp"
+    android:height="110dp"
+    android:viewportWidth="110"
+    android:viewportHeight="110">
+
+    <!-- Tilted credit card outline -->
+    <group
+        android:pivotX="55"
+        android:pivotY="55"
+        android:rotation="-12">
+        <!-- Card body -->
+        <path
+            android:pathData="M20,32 L90,32 A6,6 0 0 1 96,38 L96,72 A6,6 0 0 1 90,78 L20,78 A6,6 0 0 1 14,72 L14,38 A6,6 0 0 1 20,32 Z"
+            android:strokeColor="#FFFF5A00"
+            android:strokeWidth="3"
+            android:fillColor="#00000000" />
+        <!-- Magnetic stripe -->
+        <path
+            android:pathData="M14,44 L96,44 L96,52 L14,52 Z"
+            android:fillColor="#FFFF5A00" />
+        <!-- Chip -->
+        <path
+            android:pathData="M24,60 L36,60 A2,2 0 0 1 38,62 L38,70 A2,2 0 0 1 36,72 L24,72 A2,2 0 0 1 22,70 L22,62 A2,2 0 0 1 24,60 Z"
+            android:strokeColor="#FFFF5A00"
+            android:strokeWidth="2"
+            android:fillColor="#00000000" />
+        <!-- Card number dots -->
+        <path
+            android:pathData="M50,66 L86,66"
+            android:strokeColor="#FFFF5A00"
+            android:strokeWidth="2"
+            android:strokeLineCap="round" />
+    </group>
+
+    <!-- Swipe arrow under the card -->
+    <path
+        android:pathData="M30,96 L80,96"
+        android:strokeColor="#FFFF5A00"
+        android:strokeWidth="3"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M72,90 L82,96 L72,102"
+        android:strokeColor="#FFFF5A00"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+</vector>

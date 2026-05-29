@@ -33,7 +33,7 @@ public class ScanPaymentActivity extends BaseActivity {
         TextView tv_order_time = findViewById(R.id.tv_order_time);
         TextView tv_cancel = findViewById(R.id.tv_cancel);
 
-        tv_amount.setText(TransInitActivity.mAmount);
+        tv_amount.setText((USD_TAG.equals(currentCurrency) ? "$" : "€") + TransInitActivity.mAmount);
         tv_order_num.setText(Utils.getCurrentTime2() + Utils.getRandomData());
         tv_order_time.setText(Utils.getCurrentTime());
         tv_cancel.setOnClickListener(new View.OnClickListener() {

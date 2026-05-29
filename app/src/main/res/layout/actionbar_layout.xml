@@ -9,5 +9,5 @@
         android:layout_centerInParent="true"
         android:text="@string/app_title"
         android:textSize="20sp"
-        android:textColor="#ffffff" />
+        android:textColor="@color/on_yellow" />
 </RelativeLayout>

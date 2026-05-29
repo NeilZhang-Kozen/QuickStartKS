@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
+    android:background="@color/mp_blue"
     >
 
 
@@ -14,9 +14,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="22px"
+            android:textStyle="bold"
             android:layout_centerInParent="true"
             android:text="@string/sub_trans_bank_wait"
             android:onClick="showPic"
             android:gravity="center_horizontal"
-            android:textColor="@color/black" />
+            android:textColor="@color/white" />
 </RelativeLayout>

@@ -75,7 +75,10 @@ public class PinPadDialogPOI {
     private TextView  tvMessage;
     private EditText  etPin;
     private Button    btnConfirm;
-    private Button btnClear;
+    private View btnClear;
+    private View[] pinDots;
+    private TextView tvAmount;
+    private TextView cardChip;
     private TextView  btnEsc, btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
     PinInputFinish pinInputFinish;
 
@@ -150,6 +153,8 @@ public class PinPadDialogPOI {
         ConstraintLayout view = (ConstraintLayout) inflater.inflate(R.layout.layout_password, null);
         TextView tvTitle = view.findViewById(R.id.tvTitle);
         tvMessage = view.findViewById(R.id.tvMessage);
+        tvAmount = view.findViewById(R.id.tvAmount);
+        cardChip = view.findViewById(R.id.cardChip);
         etPin = view.findViewById(R.id.etPin);
         btnConfirm = view.findViewById(R.id.btnConfirm);
         btnClear = view.findViewById(R.id.btnClear);
@@ -165,13 +170,33 @@ public class PinPadDialogPOI {
         btn8 = view.findViewById(R.id.btn8);
         btn9 = view.findViewById(R.id.btn9);
 
+        pinDots = new View[]{
+                view.findViewById(R.id.pin_dot_0),
+                view.findViewById(R.id.pin_dot_1),
+                view.findViewById(R.id.pin_dot_2),
+                view.findViewById(R.id.pin_dot_3),
+                view.findViewById(R.id.pin_dot_4),
+                view.findViewById(R.id.pin_dot_5),
+        };
+
 //        Group groupKeyboard = view.findViewById(R.id.groupKeyboard);
 //        if (DeviceConfig.isHardwareKeyboard) {
 //            groupKeyboard.setVisibility(View.GONE);
 //        }
 
-        tvTitle.setText(title);
-        tvMessage.setText(message);
+        if (cardChip != null && title != null && !title.isEmpty()) {
+            cardChip.setText(title);
+        }
+        if (message != null && !message.isEmpty()) {
+            tvMessage.setText(message);
+        }
+        if (tvAmount != null) {
+            com.kozen.quickstartks.TransActivity host = com.kozen.quickstartks.TransActivity.getInstance();
+            if (host != null) {
+                String prefix = com.kozen.quickstartks.utils.Utils.USD_TAG.equals(host.currency) ? "$" : "€";
+                tvAmount.setText(prefix + host.eAmount);
+            }
+        }
 
         dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -394,12 +419,26 @@ public class PinPadDialogPOI {
 
         @Override
         public void onKeyboardInput(POIHsmManage manage, int numKeys) {
+            final int filled = numKeys;
             StringBuilder info = new StringBuilder();
             while (0 != (numKeys--)) {
                 info.append("*");
             }
             if (info.length() <= 12) {
                 etPin.setText(info.toString());
+            }
+            if (pinDots != null && pinDots.length > 0) {
+                pinDots[0].post(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < pinDots.length; i++) {
+                            if (pinDots[i] == null) continue;
+                            pinDots[i].setBackgroundResource(i < filled
+                                    ? R.drawable.bg_pin_dot_filled
+                                    : R.drawable.bg_pin_dot_empty);
+                        }
+                    }
+                });
             }
         }
 
@@ -571,7 +610,7 @@ public class PinPadDialogPOI {
             keyView[10] = btnEsc;
         }
 
-        Button ivClear = btnClear;
+        View ivClear = btnClear;
         Button btnConfirm = this.btnConfirm;
         int viewIndex = 0;
 

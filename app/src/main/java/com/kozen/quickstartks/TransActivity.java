@@ -98,9 +98,12 @@ public class TransActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         sInstance = this;
         setContentView(R.layout.activity_trans_card);
-        if (getSupportActionBar().isShowing() && ScreenUtils.getScreenHeight() <= 480) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        getWindow().setStatusBarColor(getResources().getColor(R.color.card_dark_mid));
+        View decor = getWindow().getDecorView();
+        decor.setSystemUiVisibility(decor.getSystemUiVisibility() & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
 
         String amount = getIntent().getStringExtra("amount");
         currency = getIntent().getStringExtra(CURRENCY_TAG);
@@ -122,7 +125,7 @@ public class TransActivity extends BaseActivity {
         TextView tv_order_num = findViewById(R.id.tv_order_num);
         TextView tv_order_time = findViewById(R.id.tv_order_time);
 
-        tv_amount.setText(eAmount);
+        tv_amount.setText((USD_TAG.equals(currency) ? "$" : "€") + eAmount);
         tv_order_num.setText(Utils.getCurrentTime2() + Utils.getRandomData());
         tv_order_time.setText(Utils.getCurrentTime());
         transType = 0;

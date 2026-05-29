@@ -46,7 +46,7 @@
     <string name="pin_offline_pin">离线输密</string>
     <string name="text_pin">输密次数 </string>
     <string name="pin_count_last">最后一次输密</string>
-    <string name="print_title">「欢迎使用KOZEN产品」</string>
+    <string name="print_title">「欢迎使用Mercado Pago」</string>
     <string name="print_addr">浦东新区-龙东大道3000号\n 中国-上海</string>
     <string name="print_amount">数量</string>
     <string name="print_items">商品</string>
@@ -61,9 +61,9 @@
     <string name="print_approved">购买成功</string>
     <string name="print_amount82">支付金额：82.97</string>
     <string name="print_time">07/01/2025 14:37</string>
-    <string name="print_leader">KOZEN\n智能POS的引领者</string>
-    <string name="print_introduce">KOZEN，一个专注于电子支付的科技品牌，致力于通过智能POS解决方案提供卓越的用户体验。</string>
-    <string name="print_website">www.kozenenterprise.com</string>
+    <string name="print_leader">MERCADO PAGO\n安全便捷的数字支付</string>
+    <string name="print_introduce">Mercado Pago，领先的金融科技品牌，致力于通过智能 POS 解决方案为商户和消费者带来卓越的数字支付体验。</string>
+    <string name="print_website">www.mercadopago.com</string>
     <string name="print_thanks">感谢您的光临！</string>
 
     //-------Sub-Screen------------
@@ -71,6 +71,9 @@
     <string name="sub_trans_amount">交易金额 :</string>
     <string name="sub_screen_unavailable">副屏服务不可用</string>
     <string name="waiting_customer_operation">等待用户操作</string>
+    <string name="waiting_select_currency">请用户选择货币</string>
+    <string name="waiting_select_payment_method">请用户选择支付方式</string>
+    <string name="waiting_customer_subtitle">请在客显屏继续操作</string>
 
     <string name="sub_trans_bank_card">银行卡</string>
     <string name="sub_trans_pay_code">付款码</string>
@@ -89,4 +92,50 @@
     <string name="sub_trans_code_tip">请扫描支付二维码</string>
     <string name="sub_trans_code_tip2">扫描支付二维码</string>
     <string name="sub_trans_net">请先连接网络</string>
+
+    <!-- UI 改版 — 品牌/头部 -->
+    <string name="brand_company">Mercado Pago</string>
+    <string name="brand_logo_initial">M</string>
+    <string name="header_secure_payment">安全支付</string>
+    <string name="header_counter">1号台</string>
+    <string name="header_amount_input_title">金额输入</string>
+    <string name="header_amount_input_subtitle">确认本次收款金额并继续支付</string>
+    <string name="header_card_reader">读卡</string>
+    <string name="header_card_reader_subtitle">靠近读卡区完成支付</string>
+    <string name="header_transaction_detail">交易详情</string>
+
+    <!-- 状态 -->
+    <string name="status_online">在线</string>
+    <string name="status_paid">已支付</string>
+
+    <!-- 徽章 -->
+    <string name="badge_pin">输密</string>
+    <string name="badge_encrypted_input">加密输入</string>
+    <string name="badge_step_2">第 2 步</string>
+
+    <!-- 读卡屏 -->
+    <string name="card_present_title">请读卡</string>
+    <string name="card_chip_label">卡</string>
+    <string name="card_reading">读卡中…</string>
+    <string name="card_keep_close">请保持卡片靠近感应区</string>
+
+    <!-- 密码对话框 -->
+    <string name="pin_pay_label">支付金额</string>
+    <string name="pin_input_title">请输入密码</string>
+    <string name="pin_input_subtitle">密码将被安全加密，不会在收银端显示</string>
+    <string name="pin_key_cancel">取消</string>
+    <string name="pin_btn_confirm_pay">确认支付</string>
+
+    <!-- 交易结果屏 -->
+    <string name="result_transaction_done">交易已完成</string>
+    <string name="result_receipt_generated">凭据已生成</string>
+    <string name="result_order_details">订单明细</string>
+
+    <!-- 金额输入屏 -->
+    <string name="label_amount_due">应收金额</string>
+    <string name="label_manual_input">手动输入</string>
+    <string name="label_demo_order_no">订单 #1028</string>
+    <string name="label_current_order">当前订单</string>
+    <string name="label_demo_items">拿铁 ×2 · 可颂 ×1 · 冷萃 ×1</string>
+    <string name="btn_continue">继续</string>
 </resources>

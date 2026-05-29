@@ -3,15 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/mp_blue"
     android:orientation="vertical">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:background="@color/white"
+        android:layout_marginTop="35px"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -19,18 +18,18 @@
             android:focusable="false"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px"
             android:layout_weight="1"
             android:background="@drawable/bg_blue_stroke"
             android:gravity="center"
             android:onClick="onCardTrans"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="20px">
 
             <ImageView
                 android:id="@+id/iv_result_image"
-                android:layout_width="110dp"
+                android:layout_width="50px"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:gravity="center"
@@ -44,8 +43,8 @@
                 android:layout_marginTop="5px"
                 android:gravity="center"
                 android:text="@string/sub_trans_bank_card"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textColor="@color/text_primary"
+                android:textSize="18px" />
 
         </LinearLayout>
 
@@ -56,16 +55,16 @@
 
             android:focusable="false"
             android:onClick="onQRTrans"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px"
             android:layout_weight="1"
             android:background="@drawable/bg_blue_stroke"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="20px">
 
             <ImageView
-                android:layout_width="110dp"
+                android:layout_width="50px"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:gravity="center"
@@ -78,8 +77,8 @@
                 android:layout_marginTop="5px"
                 android:gravity="center"
                 android:text="@string/sub_trans_pay_code"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
+                android:textColor="@color/text_primary"
+                android:textSize="18px" />
 
         </LinearLayout>
     </LinearLayout>
@@ -88,14 +87,14 @@
         android:id="@+id/tv_amount"
         android:focusable="false"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/bg_round_blue_small"
+        android:layout_height="60px"
+        android:layout_marginLeft="10px"
+        android:layout_marginTop="35px"
+        android:layout_marginRight="10px"
+        android:background="@drawable/bg_round_dark"
         android:gravity="center"
         android:onClick="showPic"
         android:textColor="@color/white"
-        android:textSize="22sp"
+        android:textSize="22px"
         android:textStyle="bold" />
 </LinearLayout>

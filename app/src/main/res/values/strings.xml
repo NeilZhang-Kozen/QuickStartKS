@@ -39,7 +39,7 @@
     <string name="pin_offline_pin">Offline PIN</string>
     <string name="text_pin">PIN </string>
     <string name="pin_count_last">PIN Last Times</string>
-    <string name="print_title">「WELCOME TO USE KOZEN PRODUCTS」</string>
+    <string name="print_title">「WELCOME TO MERCADO PAGO」</string>
     <string name="print_addr">LONG DONG AVENUE - Pudong New\n District - Shanghai - China</string>
     <string name="print_amount">QTY</string>
     <string name="print_items">ITEMS</string>
@@ -54,9 +54,9 @@
     <string name="print_approved">APPROVED-PURCHASE</string>
     <string name="print_amount82">AMOUNT:82.97</string>
     <string name="print_time">07/01/2025 14:37</string>
-    <string name="print_leader">KOZEN\nTO LEAD TO WORK WITH LEADER</string>
-    <string name="print_introduce">KOZEN, a tech brand specializing in electronic payments, is dedicated to delivering top-notch user experiences with smart POS solutions.</string>
-    <string name="print_website">www.kozenenterprise.com</string>
+    <string name="print_leader">MERCADO PAGO\nFAST, SECURE PAYMENTS</string>
+    <string name="print_introduce">Mercado Pago, the leading fintech brand for digital payments, dedicated to delivering top-notch user experiences with smart POS solutions.</string>
+    <string name="print_website">www.mercadopago.com</string>
     <string name="print_thanks">THANK YOU FOR VISITING!</string>
 
     //-------Sub-Screen------------
@@ -64,6 +64,9 @@
     <string name="sub_trans_amount">Trans Amount :</string>
     <string name="sub_screen_unavailable">Sub-screen service is unavailable</string>
     <string name="waiting_customer_operation">Waiting for customer operation</string>
+    <string name="waiting_select_currency">Ask customer to select currency</string>
+    <string name="waiting_select_payment_method">Ask customer to select payment method</string>
+    <string name="waiting_customer_subtitle">Continue on the customer screen</string>
 
     <string name="sub_trans_bank_card">Bank Card</string>
     <string name="sub_trans_pay_code">Payment Code</string>
@@ -87,9 +90,50 @@
     <string name="sub_trans_code_tip3">Waiting customer scan Qr code.</string>
     <string name="sub_trans_code_tip2">Scan the Qr code.</string>
     <string name="sub_trans_net">Please connect to the network</string>
-    <!--    <string name="app_name">QuickStart</string>-->
-    <!--    <string name="app_name">QuickStart</string>-->
-    <!--    <string name="app_name">QuickStart</string>-->
-    <!--    <string name="app_name">QuickStart</string>-->
-    <!--    <string name="app_name">QuickStart</string>-->
+
+    <!-- UI redesign — shared brand/header -->
+    <string name="brand_company">Mercado Pago</string>
+    <string name="brand_logo_initial">M</string>
+    <string name="header_secure_payment">Secure payment</string>
+    <string name="header_counter">Counter 01</string>
+    <string name="header_amount_input_title">Amount input</string>
+    <string name="header_amount_input_subtitle">Confirm the amount and continue payment</string>
+    <string name="header_card_reader">Card reader</string>
+    <string name="header_card_reader_subtitle">Tap or insert card to pay</string>
+    <string name="header_transaction_detail">Transaction detail</string>
+
+    <!-- Status labels -->
+    <string name="status_online">Online</string>
+    <string name="status_paid">Paid</string>
+
+    <!-- Badges -->
+    <string name="badge_pin">PIN</string>
+    <string name="badge_encrypted_input">Encrypted input</string>
+    <string name="badge_step_2">Step 2</string>
+
+    <!-- Card reader screen -->
+    <string name="card_present_title">Tap card</string>
+    <string name="card_chip_label">Card</string>
+    <string name="card_reading">Reading card…</string>
+    <string name="card_keep_close">Keep the card near the reader</string>
+
+    <!-- PIN dialog -->
+    <string name="pin_pay_label">Amount</string>
+    <string name="pin_input_title">Enter PIN</string>
+    <string name="pin_input_subtitle">PIN is encrypted; not shown on terminal</string>
+    <string name="pin_key_cancel">Cancel</string>
+    <string name="pin_btn_confirm_pay">Confirm payment</string>
+
+    <!-- Trans result screen -->
+    <string name="result_transaction_done">Transaction completed</string>
+    <string name="result_receipt_generated">Receipt generated</string>
+    <string name="result_order_details">Order details</string>
+
+    <!-- Amount input screen -->
+    <string name="label_amount_due">Amount due</string>
+    <string name="label_manual_input">Manual input</string>
+    <string name="label_demo_order_no">Order #1028</string>
+    <string name="label_current_order">Current order</string>
+    <string name="label_demo_items">Latte ×2 · Croissant ×1 · Cold brew ×1</string>
+    <string name="btn_continue">Continue</string>
 </resources>

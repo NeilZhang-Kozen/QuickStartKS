@@ -54,8 +54,7 @@ public class QrPaymentActivity extends BaseActivity {
         TextView tv_order_time = findViewById(R.id.tv_order_time);
 
 
-        tv_amount.setText(mAmount);
-//        tv_amount.setText((USD_TAG.equals(currency)?"$":"€")+mAmount);
+        tv_amount.setText((USD_TAG.equals(currency) ? "$" : "€") + mAmount);
 //        tv_order_num.setText(Utils.getCurrentTime2() + Utils.getRandomData());
 //        tv_order_time.setText(Utils.getCurrentTime());
 

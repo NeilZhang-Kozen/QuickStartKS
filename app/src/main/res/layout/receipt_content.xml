@@ -1,342 +1,518 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#FFFFFF"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:id="@+id/content"
-    android:padding="10px"
+    android:padding="16px"
     tools:ignore="MissingDefaultResource">
+
+    <!-- Header brand image -->
+<!--    <ImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:adjustViewBounds="true"-->
+<!--        android:gravity="center"-->
+<!--        android:scaleType="centerInside"-->
+<!--        android:src="@drawable/receipt_pizzahut" />-->
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10px"
         android:gravity="center"
-        android:layout_marginTop="40px"
-        android:text="「WELCOME TO USE KOZEN PRODUCTS」"
+        android:text="Mercado Pago"
         android:textColor="#000000"
-        android:textSize="18px" />
-    <ImageView
+        android:textSize="50px"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/tv_receipt_merchant"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        android:src="@drawable/receipt_pizzahut"
-        android:gravity="center" />
+        android:layout_marginTop="10px"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#000000"
+        android:textSize="22px"
+        android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6px"
         android:gravity="center"
-        android:text="LONG DONG AVENUE - Pudong New\n District - Shanghai - China"
+        android:text="MERCHANT COPY"
         android:textColor="#000000"
-        android:textSize="20px" />
+        android:textSize="18px" />
 
+    <TextView
+        android:id="@+id/tv_receipt_transtype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6px"
+        android:gravity="center"
+        android:text="SALE"
+        android:textColor="#000000"
+        android:textSize="22px"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4px"
+        android:layout_marginTop="14px"
+        android:layout_marginBottom="14px"
+        android:background="@drawable/bg_black_line2" />
+
+    <!-- Detail rows -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="MERCHANT NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_mid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="TERMINAL NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_tid"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="OPERATOR NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_operator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="CARD NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="CARD TYPE"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_brand"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="EXPIRY DATE"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_expiry"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="BATCH NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_batch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="VOUCHER NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_voucher"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="REF NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_ref"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="AUTH CODE"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_auth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="CUSTOMER"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_customer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="DATE/TIME"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_datetime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4px"
+        android:layout_marginTop="14px"
+        android:layout_marginBottom="14px"
+        android:background="@drawable/bg_black_line2" />
+
+    <!-- Amount -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="AMOUNT"
+            android:textColor="#000000"
+            android:textSize="26px"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/tv_receipt_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text=""
+            android:textColor="#000000"
+            android:textSize="26px"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Backwards-compatible total field (display path uses this too) -->
+    <TextView
+        android:id="@+id/tv_receipt_total"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4px"
+        android:layout_marginTop="14px"
+        android:layout_marginBottom="14px"
+        android:background="@drawable/bg_black_line2" />
+
+    <!-- Barcode -->
     <ImageView
-        android:layout_marginTop="15px"
         android:layout_width="match_parent"
         android:layout_height="70px"
+        android:layout_marginTop="6px"
         android:background="@drawable/barcode_0"
         android:gravity="center" />
 
     <TextView
+        android:id="@+id/tv_receipt_barcode_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4px"
         android:gravity="center"
         android:text="2220760000452201111327"
         android:textColor="#000000"
-        android:textStyle="bold"
-        android:textSize="15px" />
+        android:textSize="15px"
+        android:textStyle="bold" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4px"
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="20px"
-        android:background="@drawable/bg_black_line2" />
-
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ll"
-        android:padding="8px">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5px"
-            android:layout_marginBottom="5px"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="QTY"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="20px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="ITEMS"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="20px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="ITL"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="20px" />
-        </TableRow>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4px"
-            android:layout_marginBottom="10px"
-            android:background="@drawable/bg_black_line2" />
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4px"
-            android:layout_marginBottom="4px"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="01"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="LASAGNA"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="30.99"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6px"
-            android:layout_marginBottom="6px"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="02"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="OSSL BUCO"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="20.99"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-        </TableRow>
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4px"
-            android:layout_marginBottom="4px"
-            android:gravity="center">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="03"
-                android:layout_weight="1"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="MARGRITS PIZZA"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="40.99"
-                android:layout_weight="1"
-                android:textColor="#000000"
-                android:textSize="18px" />
-        </TableRow>
-    </TableLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4px"
-        android:background="@drawable/bg_black_line2" />
-
-    <RelativeLayout
-        android:layout_marginTop="6px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="TOTAL:"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:textSize="20px" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="82.97"
-            android:textStyle="bold"
-            android:textColor="#000000"
-            android:textSize="20px" />
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_marginTop="20px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="CARD NUMBER:"
-            android:textColor="#000000"
-            android:textSize="18px" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="56789*********116"
-            android:textColor="#000000"
-            android:textSize="18px" />
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_marginTop="6px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:text="CUSTOMER ID:"
-            android:textColor="#000000"
-            android:textSize="18px" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="Wengxin Chen"
-            android:textColor="#000000"
-            android:textSize="18px" />
-
-    </RelativeLayout>
-
+    <!-- Cardholder signature -->
     <TextView
-        android:layout_marginTop="20px"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="APPROVED-PURCHASE"
-        android:textColor="#000000"
-        android:textSize="18px" />
-    <TextView
-        android:layout_marginTop="6px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="AMOUNT:82.97"
-        android:textColor="#000000"
-        android:textSize="18px" />
-    <TextView
-        android:layout_marginTop="6px"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="07/01/2024 14:37"
+        android:layout_marginTop="40px"
+        android:text="CARDHOLDER SIGNATURE"
         android:textColor="#000000"
         android:textSize="18px" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="4px"
-        android:layout_marginTop="20px"
-        android:layout_marginBottom="20px"
+        android:layout_marginTop="6px"
+        android:layout_marginBottom="10px"
         android:background="@drawable/bg_black_line2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="I ACKNOWLEDGE SATISFACTORY RECEIPT OF RELATIVE GOODS / SERVICES"
+        android:textColor="#000000"
+        android:textSize="16px" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4px"
+        android:layout_marginTop="14px"
+        android:layout_marginBottom="14px"
+        android:background="@drawable/bg_black_line2" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textStyle="bold"
         android:scaleX="0.9"
-        android:text="KOZEN\nTO LEAD TO WORK WITH LEADER"
+        android:text="@string/print_leader"
         android:textColor="#000000"
-        android:textSize="20px" />
+        android:textSize="20px"
+        android:textStyle="bold" />
+
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6px"
         android:gravity="center"
-        android:text="KOZEN, a tech brand specializing in electronic payments, is dedicated to delivering top-notch user experiences with smart POS solutions."
+        android:text="@string/print_introduce"
         android:textColor="#000000"
-        android:textSize="20px" />
+        android:textSize="18px" />
+
     <ImageView
         android:layout_width="180px"
-        android:layout_marginTop="30px"
         android:layout_height="wrap_content"
-        android:scaleType="centerInside"
+        android:layout_marginTop="20px"
         android:adjustViewBounds="true"
-        android:src="@drawable/web_qr"
-        android:gravity="center" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="-6px"
-        android:text="www.kozenenterprise.com"
-        android:textColor="#000000"
-        android:textSize="20px" />
+        android:scaleType="centerInside"
+        android:src="@drawable/mercado_pago_qr" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4px"
         android:gravity="center"
-        android:layout_marginTop="30px"
+        android:text="@string/print_website"
+        android:textColor="#000000"
+        android:textSize="18px" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24px"
+        android:gravity="center"
         android:text="THANK YOU FOR VISITING!"
         android:textColor="#000000"
-        android:textSize="20px" />
+        android:textSize="20px"
+        android:textStyle="bold" />
 </LinearLayout>

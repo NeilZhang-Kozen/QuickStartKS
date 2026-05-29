@@ -1,18 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF2975e5</color>
-    <color name="purple_700">#FF3700B3</color>
+    <color name="purple_500">#FFFF5A00</color>
+    <color name="purple_700">#FFE04E00</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="main1">#FF2975e5</color>
-    <color name="gray">#FFeeeeee</color>
-    <color name="gray_888">#888888</color>
-    <color name="gray_555">#555555</color>
-    <color name="gray_eee">#FFeeeeee</color>
-    <color name="gray_eee55">#55eeeeee</color>
+
+    <!-- Orange + dark scheme -->
+    <color name="main1">#FFFF5A00</color>
+    <color name="mp_blue">#FFFF5A00</color>          <!-- accent / fills: orange -->
+    <color name="mp_blue_dark">#FFE04E00</color>     <!-- pressed orange -->
+    <color name="mp_blue_light">#FFFFF2EA</color>    <!-- light orange tint for icon circles -->
+    <color name="mp_green">#FF1DBF73</color>
+    <color name="mp_red">#FFE5484D</color>
+    <color name="mp_yellow">#FFFF5A00</color>
+    <color name="on_yellow">#FFFFFFFF</color>        <!-- white text on orange -->
+
+    <color name="page_bg">#FFF4F5F7</color>          <!-- light page -->
+    <color name="card">#FFFFFFFF</color>             <!-- white surface -->
+    <color name="card_elevated">#FFF2F4F7</color>
+    <color name="key_bg">#FFF0F1F4</color>
+    <color name="text_primary">#FF202124</color>
+    <color name="text_secondary">#FF777B82</color>
+    <color name="divider">#FFEDF0F4</color>
+
+    <!-- dark card gradient -->
+    <color name="card_dark_start">#FF23242A</color>
+    <color name="card_dark_mid">#FF17181C</color>
+    <color name="card_dark_end">#FF101115</color>
+
+    <!-- orange accents -->
+    <color name="orange_grad_start">#FFFF7A1A</color>
+    <color name="orange_grad_end">#FFFF4F00</color>
+    <color name="orange_solid">#FFFF5A00</color>
+    <color name="orange_tint">#FFFFF2EA</color>
+    <color name="orange_text">#FFA94300</color>
+
+    <!-- status badges -->
+    <color name="badge_green_bg">#FFECF9F3</color>
+    <color name="badge_green_dot">#FF1DBF73</color>
+    <color name="badge_green_text">#FF177346</color>
+
+    <!-- key colors (PIN keypad action keys) -->
+    <color name="key_green_bg">#FFE8F7EF</color>
+    <color name="key_green_text">#FF177346</color>
+    <color name="key_red_bg">#FFFDECEC</color>
+    <color name="key_red_text">#FFC93030</color>
+    <color name="key_yellow_bg">#FFFFF4D6</color>
+    <color name="key_yellow_text">#FFB07300</color>
+
+    <!-- text on dark surfaces -->
+    <color name="on_dark">#FFFFFFFF</color>
+    <color name="on_dark_dim">#9EFFFFFF</color>
+
+    <color name="gray">#FFE7E9EE</color>
+    <color name="gray_888">#777B82</color>
+    <color name="gray_555">#FF777B82</color>
+    <color name="gray_eee">#FFEDF0F4</color>
+    <color name="gray_eee55">#66000000</color>
     <color name="transparent">#00000000</color>
     <color name="yellow_red">#fd5b22</color>
 </resources>

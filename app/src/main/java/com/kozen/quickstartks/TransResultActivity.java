@@ -1,17 +1,14 @@
+
 package com.kozen.quickstartks;
 
 import static com.kozen.quickstartks.utils.Utils.USD_TAG;
 
 import android.app.Activity;
-import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -35,6 +32,9 @@ import com.kozen.quickstartks.utils.SecondScreenUtils;
 import com.kozen.quickstartks.utils.Utils;
 import com.pos.sdk.printer.POIPrinterManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class TransResultActivity extends BaseActivity {
 
     private ScrollView sl_receipt;
@@ -42,11 +42,13 @@ public class TransResultActivity extends BaseActivity {
     private View reslut_line;
     private SoundPool mSoundPool;
 
+    private ReceiptBuilder.ReceiptData receiptData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trans_result);
-        if (getSupportActionBar().isShowing() && ScreenUtils.getScreenHeight() <= 480) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         int code = getIntent().getIntExtra(TransActivity.TransResult_Code, -1);
@@ -65,12 +67,17 @@ public class TransResultActivity extends BaseActivity {
         LinearLayout content = findViewById(R.id.content);
         LinearLayout result_data_ll = findViewById(R.id.result_data_ll);
         tv_result_confirm.setVisibility(View.GONE);
-        tv_amount.setText(amount);
+        tv_amount.setText((USD_TAG.equals(currency) ? "$" : "€") + amount);
+        String cardNo = "";
+        String cardHolder = "";
+        String cardBrand = "";
+        String expiry = "";
         if (data != null) {
             EmvCard emvCard = new EmvCard(data);
 
             if (emvCard.getCardNumber() != null) {
-                tv_card_number.setText(Utility.formatCard(emvCard.getCardNumber(), true));
+                cardNo = Utility.formatCard(emvCard.getCardNumber(), true);
+                tv_card_number.setText(cardNo);
             } else {
                 tv_card_number.setText("");
             }
@@ -78,11 +85,22 @@ public class TransResultActivity extends BaseActivity {
 //            tv_card_user.setText(EmvCardType.getCardType(Card_Type));
 
             if (emvCard.getCardHolderName() != null) {
-                tv_card_user.setText(emvCard.getCardHolderName());
+                cardHolder = emvCard.getCardHolderName();
+                tv_card_user.setText(cardHolder);
+            }
+
+            if (emvCard.getAppLabel() != null) {
+                cardBrand = emvCard.getAppLabel();
+            }
+
+            if (emvCard.getCardExpireDate() != null) {
+                expiry = new SimpleDateFormat("MM/yy", Locale.getDefault()).format(emvCard.getCardExpireDate());
             }
         }
 
         amount = (USD_TAG.equals(currency) ? "$" : "€") + amount;
+        receiptData = ReceiptBuilder.fromTransaction(cardNo, cardHolder, cardBrand, expiry, amount, "SALE");
+        bindReceiptViews(findViewById(android.R.id.content), receiptData);
         if (code == 0) {
             playSound();
             if (TransInitActivity.isExistSecScreen) {
@@ -344,44 +362,49 @@ public class TransResultActivity extends BaseActivity {
     }
 
     public Bitmap layoutToBitmap(Activity activity) {
-        // 小票宽度
-        int RECEIPT_WIDTH_PX = 384;
-//
-//        // 测量 LinearLayout 的宽度
-//        view.measure(View.MeasureSpec.makeMeasureSpec(RECEIPT_WIDTH_PX, View.MeasureSpec.EXACTLY), View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-//
-//        // 这里多打印 200 的高度可以理解为走纸操作（也可以用 printerManager.addPrintLine(new TextPrintLine(" ", 0, 100)) 的方式）
-//        int heightPx = view.getMeasuredHeight() + 200;
-//
-//        // 布局 LinearLayout
-//        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-//
-//        // 创建 Bitmap
-//        Bitmap bitmap = Bitmap.createBitmap(RECEIPT_WIDTH_PX, heightPx, Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(bitmap);
-//
-//        // 绘制 LinearLayout 到 Bitmap
-//        view.draw(canvas);
+        int width = ReceiptBuilder.RECEIPT_WIDTH_PX;
+        LinearLayout view = (LinearLayout) android.view.LayoutInflater.from(activity)
+                .inflate(R.layout.receipt_content, null, false);
+        bindReceiptViews(view, receiptData);
 
-
-        XmlResourceParser xmlParser = getResources().getLayout(R.layout.receipt_content);
-
-        View view = LayoutInflater.from(activity).inflate(xmlParser, null);
-
-        view.measure(View.MeasureSpec.makeMeasureSpec(RECEIPT_WIDTH_PX, View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE >> 2, View.MeasureSpec.AT_MOST));
-
-        view.layout(0, 0,
-                view.getMeasuredWidth(),
-                view.getMeasuredHeight());
-
-
-        Bitmap bitmap = Bitmap.createBitmap(RECEIPT_WIDTH_PX, view.getMeasuredHeight() + 200, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawColor(Color.WHITE);
-
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+        Bitmap bitmap = Bitmap.createBitmap(width, view.getMeasuredHeight() + 80, Bitmap.Config.ARGB_8888);
+        android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+        canvas.drawColor(android.graphics.Color.WHITE);
         view.draw(canvas);
         return bitmap;
+    }
+
+    private static void bindReceiptViews(View root, ReceiptBuilder.ReceiptData d) {
+        if (root == null || d == null) {
+            return;
+        }
+        setText(root, R.id.tv_receipt_merchant, d.merchantName);
+        setText(root, R.id.tv_receipt_transtype, d.transType);
+        setText(root, R.id.tv_receipt_mid, d.mid);
+        setText(root, R.id.tv_receipt_tid, d.tid);
+        setText(root, R.id.tv_receipt_operator, d.operatorNo);
+        setText(root, R.id.tv_receipt_card, d.cardNo);
+        setText(root, R.id.tv_receipt_brand, d.cardBrand);
+        setText(root, R.id.tv_receipt_expiry, d.expiry);
+        setText(root, R.id.tv_receipt_batch, d.batchNo);
+        setText(root, R.id.tv_receipt_voucher, d.voucherNo);
+        setText(root, R.id.tv_receipt_ref, d.refNo);
+        setText(root, R.id.tv_receipt_auth, d.authCode);
+        setText(root, R.id.tv_receipt_customer, d.cardHolder);
+        setText(root, R.id.tv_receipt_datetime, d.dateTime);
+        setText(root, R.id.tv_receipt_amount, d.amount);
+        setText(root, R.id.tv_receipt_total, d.amount);
+    }
+
+    private static void setText(View root, int id, String text) {
+        View v = root.findViewById(id);
+        if (v instanceof TextView) {
+            ((TextView) v).setText(text == null ? "" : text);
+        }
     }
 
     private void startLoadingAnimation(ImageView iv) {

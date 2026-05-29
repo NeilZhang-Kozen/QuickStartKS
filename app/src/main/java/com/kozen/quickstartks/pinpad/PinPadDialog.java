@@ -28,6 +28,7 @@ import com.kozen.financial.constant.ConstantSecurity;
 import com.kozen.financial.emv.IEmvManager;
 import com.kozen.financial.engine.FinancialEngine;
 import com.kozen.financial.pinpad.IPinpadManager;
+import com.kozen.financial.pinpad.PinViewEnum;
 import com.kozen.financial.pinpad.PinpadInputCallback;
 import com.kozen.financial.security.ISecurityManager;
 import com.kozen.quickstartks.R;
@@ -39,6 +40,8 @@ import com.kozen.quickstartks.utils.PosUtils;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class PinPadDialog {
 
@@ -83,7 +86,10 @@ public class PinPadDialog {
     private TextView tvMessage;
     private EditText etPin;
     private Button btnConfirm;
-    private Button btnClear;
+    private View btnClear;
+    private View[] pinDots;
+    private TextView tvAmount;
+    private TextView cardChip;
     private TextView btnEsc, btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9;
     PinInputFinish pinInputFinish;
 
@@ -178,6 +184,8 @@ public class PinPadDialog {
         ConstraintLayout view = (ConstraintLayout) inflater.inflate(R.layout.layout_password, null);
         TextView tvTitle = view.findViewById(R.id.tvTitle);
         tvMessage = view.findViewById(R.id.tvMessage);
+        tvAmount = view.findViewById(R.id.tvAmount);
+        cardChip = view.findViewById(R.id.cardChip);
         etPin = view.findViewById(R.id.etPin);
         btnConfirm = view.findViewById(R.id.btnConfirm);
         btnClear = view.findViewById(R.id.btnClear);
@@ -193,13 +201,33 @@ public class PinPadDialog {
         btn8 = view.findViewById(R.id.btn8);
         btn9 = view.findViewById(R.id.btn9);
 
+        pinDots = new View[]{
+                view.findViewById(R.id.pin_dot_0),
+                view.findViewById(R.id.pin_dot_1),
+                view.findViewById(R.id.pin_dot_2),
+                view.findViewById(R.id.pin_dot_3),
+                view.findViewById(R.id.pin_dot_4),
+                view.findViewById(R.id.pin_dot_5),
+        };
+
 //        Group groupKeyboard = view.findViewById(R.id.groupKeyboard);
 //        if (DeviceConfig.isHardwareKeyboard) {
 //            groupKeyboard.setVisibility(View.GONE);
 //        }
 
-        tvTitle.setText(title);
-        tvMessage.setText(message);
+        if (cardChip != null && title != null && !title.isEmpty()) {
+            cardChip.setText(title);
+        }
+        if (message != null && !message.isEmpty()) {
+            tvMessage.setText(message);
+        }
+        if (tvAmount != null) {
+            com.kozen.quickstartks.TransActivity host = com.kozen.quickstartks.TransActivity.getInstance();
+            if (host != null) {
+                String prefix = com.kozen.quickstartks.utils.Utils.USD_TAG.equals(host.currency) ? "$" : "€";
+                tvAmount.setText(prefix + host.eAmount);
+            }
+        }
 
         dialog = new Dialog(context, android.R.style.Theme_Translucent_NoTitleBar);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -241,8 +269,43 @@ public class PinPadDialog {
         mOrientationListener.disable();
     }
 
+    private Map<String, View> buildViewMap() {
+        Map<String, View> viewMap = new LinkedHashMap<>();
+        viewMap.put(PinViewEnum.BUTTON0.getType(), btn0);
+        viewMap.put(PinViewEnum.BUTTON1.getType(), btn1);
+        viewMap.put(PinViewEnum.BUTTON2.getType(), btn2);
+        viewMap.put(PinViewEnum.BUTTON3.getType(), btn3);
+        viewMap.put(PinViewEnum.BUTTON4.getType(), btn4);
+        viewMap.put(PinViewEnum.BUTTON5.getType(), btn5);
+        viewMap.put(PinViewEnum.BUTTON6.getType(), btn6);
+        viewMap.put(PinViewEnum.BUTTON7.getType(), btn7);
+        viewMap.put(PinViewEnum.BUTTON8.getType(), btn8);
+        viewMap.put(PinViewEnum.BUTTON9.getType(), btn9);
+        viewMap.put(PinViewEnum.BUTTON_ESC.getType(), btnEsc);
+        viewMap.put(PinViewEnum.BUTTON_BACKSPACE.getType(), btnClear);
+        viewMap.put(PinViewEnum.BUTTON_ENTER.getType(), btnConfirm);
+        return viewMap;
+    }
+
+    private void startInputPinDeferred() {
+        Runnable invoke = new Runnable() {
+            @Override
+            public void run() {
+                Map<String, View> viewMap = buildViewMap();
+                Log.d(TAG, "startInputPin deferred: btn0 w=" + btn0.getWidth() + " h=" + btn0.getHeight());
+                pinpadManager.startInputPin(pinInfo, viewMap, pinEventListener);
+            }
+        };
+        View decor = dialog.getWindow() != null ? dialog.getWindow().getDecorView() : null;
+        if (decor != null) {
+            decor.post(invoke);
+        } else {
+            invoke.run();
+        }
+    }
+
     private int onVerifyPlainPin() {
-        pinpadManager.startInputPin(pinInfo, pinEventListener);
+        startInputPinDeferred();
         return 0;
     }
 
@@ -253,7 +316,7 @@ public class PinPadDialog {
         }
 
         securityManager.writeRsaKey(keyIndex, pinModule, pinExponent);
-        pinpadManager.startInputPin(pinInfo, pinEventListener);
+        startInputPinDeferred();
         return 0;
     }
 
@@ -269,7 +332,7 @@ public class PinPadDialog {
                         @Override
                         public void run() {
                             isOrientation = true;
-                            pinpadManager.startInputPin(pinInfo, pinEventListener);
+                            startInputPinDeferred();
                         }
                     }, 100);
                 }
@@ -329,7 +392,7 @@ public class PinPadDialog {
 
 //        return hsmManage.PedGetPinBlock(keyMode, keyIndex, 0, DEFAULT_TIMEOUT_MS, data, DEFAULT_EXP_PIN_LEN_IND);
         LogPrintUtil.printBundle(pinInfo, TAG);
-        pinpadManager.startInputPin(pinInfo, pinEventListener);
+        startInputPinDeferred();
         return 0;
     }
 
@@ -342,6 +405,32 @@ public class PinPadDialog {
         public void onInput(int len, int key) {
             Log.d(TAG, "onInput====>>len:" + len + " key:" + key);
             //FinancialEngine.INSTANCE.getGeneralManager().setBeep(true, 200, 200);
+            final int filled = len;
+            if (etPin != null) {
+                final StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < filled; i++) {
+                    sb.append('*');
+                }
+                etPin.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        etPin.setText(sb.toString());
+                    }
+                });
+            }
+            if (pinDots != null && pinDots.length > 0) {
+                pinDots[0].post(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < pinDots.length; i++) {
+                            if (pinDots[i] == null) continue;
+                            pinDots[i].setBackgroundResource(i < filled
+                                    ? R.drawable.bg_pin_dot_filled
+                                    : R.drawable.bg_pin_dot_empty);
+                        }
+                    }
+                });
+            }
         }
 
         @Override
@@ -443,7 +532,7 @@ public class PinPadDialog {
             keyView[10] = btnEsc;
         }
 
-        Button ivClear = btnClear;
+        View ivClear = btnClear;
         Button btnConfirm = this.btnConfirm;
         int viewIndex = 0;
 

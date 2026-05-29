@@ -57,8 +57,10 @@ import java.lang.reflect.Method;
 public class TransInitActivity extends BaseActivity {
 
     private static final String TAG = "TransActivity";
+    private static final String ZERO_AMOUNT_TEXT = "0.00";
     private TextView tvMessage0, tvMessage1, tvMessage2, tvMessage3;
     private EditText edtAmount;
+    private boolean isZeroAmountWarningShowing = false;
     private boolean initing = false;
     boolean isTimer = false;
     private static final int MENU_ITEM_ID = 1;
@@ -93,6 +95,9 @@ public class TransInitActivity extends BaseActivity {
         } else {
             setContentView(R.layout.activity_trans_init);
 		}
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         if ("K1211".equals(Build.MODEL) || "K1112".equals(Build.MODEL)) {
             isPhysicalKeyboard = true;
         } else {
@@ -117,6 +122,16 @@ public class TransInitActivity extends BaseActivity {
         iv_del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isZeroAmountWarningShowing) {
+                    isZeroAmountWarningShowing = false;
+                    edtAmount.setText("");
+                    return;
+                }
+                String amount = normalizeAmount(edtAmount.getText().toString());
+                if (ZERO_AMOUNT_TEXT.equals(amount)) {
+                    showZeroAmountWarning();
+                    return;
+                }
                 edtAmount.setText("");
             }
         });
@@ -191,19 +206,19 @@ public class TransInitActivity extends BaseActivity {
         btn_init_next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String amount = normalizeAmount(edtAmount.getText().toString());
+                if (ZERO_AMOUNT_TEXT.equals(amount)) {
+                    showZeroAmountWarning();
+                    return;
+                }
+                edtAmount.setText(amount);
+                edtAmount.setSelection(edtAmount.getText().length());
                 if (isExistSecScreen) {
-                    DialogUtils.showProgressDialog(getString(R.string.waiting_customer_operation), TransInitActivity.this);
-                    String amount = edtAmount.getText().toString();
-                    if (TextUtils.isEmpty(amount)) {
-                        amount = "1500";
-                    }
+                    DialogUtils.showProgressDialog(getString(R.string.waiting_select_currency), TransInitActivity.this);
                     SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_currency, getString(R.string.sub_trans_amount) + " $" + amount);
                 } else {
-//                    Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
-//                    intent.putExtra("amount", edtAmount.getText().toString());
-//                    TransInitActivity.this.startActivity(intent);
                     Intent intent = new Intent(TransInitActivity.this, TransSelectActivity.class);
-                    intent.putExtra("amount", edtAmount.getText().toString());
+                    intent.putExtra("amount", amount);
                     intent.putExtra(CURRENCY_TAG, currentCurrency);
                     TransInitActivity.this.startActivity(intent);
 
@@ -247,6 +262,10 @@ public class TransInitActivity extends BaseActivity {
     public void onClick(View v) {
         String new01 = ((TextView) v).getText().toString();
         String old = edtAmount.getText().toString();
+        if (isZeroAmountWarningShowing) {
+            isZeroAmountWarningShowing = false;
+            old = "";
+        }
         if (".".equals(new01) && old.contains(".")) {
             return;
         }
@@ -256,9 +275,47 @@ public class TransInitActivity extends BaseActivity {
         } else if (data.startsWith(".")) {
             data = "0" + data;
         }
+        int dotIndex = data.indexOf('.');
+        if (dotIndex >= 0 && data.length() - dotIndex - 1 > 2) {
+            return;
+        }
         edtAmount.setText(data);
         edtAmount.setSelection(edtAmount.getText().length());
 
+    }
+
+    private void shakeAmount() {
+        if (edtAmount == null) return;
+        android.animation.ObjectAnimator shake = android.animation.ObjectAnimator.ofFloat(
+                edtAmount, "translationX", 0f, -18f, 18f, -14f, 14f, -8f, 8f, -4f, 4f, 0f);
+        shake.setDuration(420);
+        shake.start();
+    }
+
+    private void showZeroAmountWarning() {
+        if (edtAmount == null) return;
+        edtAmount.setText("");
+        edtAmount.setHint(ZERO_AMOUNT_TEXT);
+        edtAmount.requestFocus();
+        isZeroAmountWarningShowing = true;
+        shakeAmount();
+    }
+
+    private String normalizeAmount(String amount) {
+        if (TextUtils.isEmpty(amount)) {
+            return ZERO_AMOUNT_TEXT;
+        }
+        int dotIndex = amount.indexOf('.');
+        if (dotIndex < 0) {
+            return amount + ".00";
+        }
+        int decimals = amount.length() - dotIndex - 1;
+        if (decimals == 0) {
+            return amount + "00";
+        } else if (decimals == 1) {
+            return amount + "0";
+        }
+        return amount;
     }
 
     void showCover(boolean isTimer) {
@@ -334,6 +391,7 @@ public class TransInitActivity extends BaseActivity {
         if (TextUtils.isEmpty(amount)) {
             amount = "1500";
         }
+        DialogUtils.updateProgressDialog(getString(R.string.waiting_select_payment_method));
         SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " $" + amount);
 
         currentCurrency = USD_TAG;
@@ -349,6 +407,7 @@ public class TransInitActivity extends BaseActivity {
             amount = "1500";
         }
         amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        DialogUtils.updateProgressDialog(getString(R.string.waiting_select_payment_method));
         SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " €" + amount);
         currentCurrency = EUR_TAG;
 //        Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
@@ -446,9 +505,9 @@ public class TransInitActivity extends BaseActivity {
                                             switch (keyCode) {
                                                 case BUTTON_ENTER:
                                                     if (TextUtils.isEmpty(amount)) {
-                                                        edtAmount.setText(amount);
-                                                        edtAmount.setSelection(amount.length());
+                                                        showZeroAmountWarning();
                                                     } else if (PosUtils.strAmount2Long(amount) == 0) {
+                                                        showZeroAmountWarning();
                                                         break;
                                                     } else {
                                                         edtAmount.setText("");
@@ -474,6 +533,10 @@ public class TransInitActivity extends BaseActivity {
                                                 case BUTTON_7:
                                                 case BUTTON_8:
                                                 case BUTTON_9:
+                                                    if (isZeroAmountWarningShowing) {
+                                                        isZeroAmountWarningShowing = false;
+                                                        amount = "";
+                                                    }
                                                     if (amount.length() >= 13) {
                                                         break;
                                                     } else if (amount.contains(".")) {
@@ -487,6 +550,10 @@ public class TransInitActivity extends BaseActivity {
                                                     edtAmount.setSelection(amount.length());
                                                     break;
                                                 case BUTTON_DOT:
+                                                    if (isZeroAmountWarningShowing) {
+                                                        isZeroAmountWarningShowing = false;
+                                                        amount = "0";
+                                                    }
                                                     if (amount.isEmpty() || amount.contains(".")) {
                                                         break;
                                                     }
@@ -567,9 +634,9 @@ public class TransInitActivity extends BaseActivity {
                                             switch (keyCode) {
                                                 case BUTTON_ENTER:
                                                     if (TextUtils.isEmpty(amount)) {
-                                                        edtAmount.setText(amount);
-                                                        edtAmount.setSelection(amount.length());
+                                                        showZeroAmountWarning();
                                                     } else if (PosUtils.strAmount2Long(amount) == 0) {
+                                                        showZeroAmountWarning();
                                                         break;
                                                     } else {
                                                         edtAmount.setText("");
@@ -595,6 +662,10 @@ public class TransInitActivity extends BaseActivity {
                                                 case BUTTON_7:
                                                 case BUTTON_8:
                                                 case BUTTON_9:
+                                                    if (isZeroAmountWarningShowing) {
+                                                        isZeroAmountWarningShowing = false;
+                                                        amount = "";
+                                                    }
                                                     if (amount.length() >= 13) {
                                                         break;
                                                     } else if (amount.contains(".")) {
@@ -608,6 +679,10 @@ public class TransInitActivity extends BaseActivity {
                                                     edtAmount.setSelection(amount.length());
                                                     break;
                                                 case BUTTON_DOT:
+                                                    if (isZeroAmountWarningShowing) {
+                                                        isZeroAmountWarningShowing = false;
+                                                        amount = "0";
+                                                    }
                                                     if (amount.isEmpty() || amount.contains(".")) {
                                                         break;
                                                     }
