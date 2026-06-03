@@ -16,6 +16,8 @@ import com.kozen.financial.emv.IEmvListener;
 import com.kozen.financial.engine.FinancialEngine;
 import com.kozen.financial.general.IGeneralManager;
 import com.kozen.quickstartks.R;
+import com.kozen.quickstartks.PaymentCallbackDispatcher;
+import com.kozen.quickstartks.PaymentOrder;
 import com.kozen.quickstartks.TransActivity;
 import com.kozen.quickstartks.TransInitActivity;
 import com.kozen.quickstartks.TransResultActivity;
@@ -29,7 +31,6 @@ import com.kozen.quickstartks.pinpad.PinPadDialog;
 import com.kozen.quickstartks.pinpad.PinPadPHY;
 import com.kozen.quickstartks.utils.AppExecutors;
 import com.kozen.quickstartks.utils.BundleUtil;
-import com.kozen.quickstartks.utils.DialogUtils;
 import com.kozen.quickstartks.utils.LogPrintUtil;
 import com.kozen.quickstartks.utils.ParameterInit;
 import com.kozen.quickstartks.utils.PosUtils;
@@ -242,6 +243,7 @@ public class EmvListenerImpl implements IEmvListener {
         AppExecutors.getInstance().mainThread().execute(new Runnable() {
             @Override
             public void run() {
+                TransActivity.getInstance().showOnlineAuthorizing();
                 Log.d(TAG, "here is the emv data return from the SDK:");
                 byte[] data = bundle.getByteArray(ConstantEmv.POIEmvCoreManager.EmvOnlineConstraints.EMV_DATA);
                 if (data != null) {
@@ -257,19 +259,18 @@ public class EmvListenerImpl implements IEmvListener {
                 }
                 Log.d(TAG, "app can pack the iso8583 DE55 data base on the EMV_DATA");
 
-                DialogUtils.showProgressDialog(String.valueOf(R.string.trans_online_auth), TransActivity.getInstance());
             }
         });
 
         try {
             Thread.sleep(1500);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
         }
+
         AppExecutors.getInstance().mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                DialogUtils.dismissProgressDialog();
                 Bundle outBundle = new Bundle();
                 //Todo
                 Log.d(TAG, "will feedback the kernel with the host response");
@@ -347,10 +348,12 @@ public class EmvListenerImpl implements IEmvListener {
                     intent.putExtra(TransActivity.TransResult_Data, TransActivity.getInstance().transData);
                     intent.putExtra(TransActivity.TransResult_Card_Type, Card_Type);
                     intent.putExtra(CURRENCY_TAG, TransActivity.getInstance().currency);
+                    PaymentOrder.put(intent, TransActivity.getInstance().paymentOrder);
                     TransActivity.getInstance().startActivity(intent);
                     TransActivity.getInstance().finish();
                 } else {
                     Utils.setToast(TransActivity.getInstance(), String.valueOf(R.string.trans_user_cancel));
+                    TransActivity.getInstance().dispatchPaymentCallback("CANCELLED", "CARD", null, TransActivity.getInstance().getString(R.string.trans_user_cancel));
                     TransActivity.getInstance().finish();
                 }
 

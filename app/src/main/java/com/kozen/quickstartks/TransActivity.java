@@ -72,6 +72,8 @@ public class TransActivity extends BaseActivity {
     private EmvListenerImplPOI emvListenerPoi;
 
     public String eAmount = "1500";
+    private boolean transactionFinishing = false;
+    public boolean paymentCallbackDispatched = false;
     private int mTransResult = -1;
     public byte[] transData;
     private LinearLayout ll_light;
@@ -80,6 +82,8 @@ public class TransActivity extends BaseActivity {
     private ImageView iv3;
     private ImageView iv4;
     private ImageView iv_present_hand;
+    private TextView tvReaderStatus;
+    private TextView tvReaderHint;
 
     public final static int TRANS_CONTACT = 1;
     public final static int TRANS_CONTACTLESS = 2;
@@ -92,6 +96,7 @@ public class TransActivity extends BaseActivity {
     boolean detectedIcc = false;
     boolean detectedPicc = false;
     public String currency = "";
+    public PaymentOrder paymentOrder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +112,7 @@ public class TransActivity extends BaseActivity {
 
         String amount = getIntent().getStringExtra("amount");
         currency = getIntent().getStringExtra(CURRENCY_TAG);
+        paymentOrder = PaymentOrder.get(getIntent());
         if (!TextUtils.isEmpty(amount)) {
             eAmount = amount;
         }
@@ -117,6 +123,8 @@ public class TransActivity extends BaseActivity {
         iv3 = findViewById(R.id.iv3);
         iv4 = findViewById(R.id.iv4);
         iv_present_hand = findViewById(R.id.iv_present_hand);
+        tvReaderStatus = findViewById(R.id.tv_reader_status);
+        tvReaderHint = findViewById(R.id.tv_reader_hint);
 
 
         tvMessage1 = findViewById(R.id.tvMessage1);
@@ -126,14 +134,25 @@ public class TransActivity extends BaseActivity {
         TextView tv_order_time = findViewById(R.id.tv_order_time);
 
         tv_amount.setText((USD_TAG.equals(currency) ? "$" : "€") + eAmount);
-        tv_order_num.setText(Utils.getCurrentTime2() + Utils.getRandomData());
-        tv_order_time.setText(Utils.getCurrentTime());
+        String displayOrderNo = paymentOrder != null && !TextUtils.isEmpty(paymentOrder.orderNo)
+                ? paymentOrder.orderNo
+                : Utils.getCurrentTime2() + Utils.getRandomData();
+        String displayOrderTime = paymentOrder != null && !TextUtils.isEmpty(paymentOrder.orderTime)
+                ? paymentOrder.orderTime
+                : Utils.getCurrentTime();
+        String displayOrderInfo = paymentOrder != null && !TextUtils.isEmpty(paymentOrder.orderInfo)
+                ? paymentOrder.orderInfo
+                : getString(R.string.label_demo_items);
+        tv_order_num.setText(displayOrderNo);
+        tv_order_time.setText(displayOrderTime);
+        paymentOrder = PaymentOrder.fromContext(paymentOrder, eAmount, currency, displayOrderNo, displayOrderTime, displayOrderInfo);
         transType = 0;
 
 
         tv_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                transactionFinishing = true;
                 if (TransInitActivity.isPOISdk) {
                     if (emvPoiManager != null) {
                         emvPoiManager.stopTransaction();
@@ -143,6 +162,8 @@ public class TransActivity extends BaseActivity {
                         emvManager.stopTransaction();
                     }
                 }
+                dispatchPaymentCallback("CANCELLED", "CARD", null, getString(R.string.trans_user_cancel));
+                finish();
             }
         });
         tv_cancel.setVisibility(View.VISIBLE);
@@ -167,8 +188,12 @@ public class TransActivity extends BaseActivity {
                                     if (KeyboardConstant.KeyCode.BUTTON_ENTER == keyCode) {
 
                                     } else if (KeyboardConstant.KeyCode.BUTTON_ESC == keyCode) {
-
-                                        emvManager.stopTransaction();
+                                        transactionFinishing = true;
+                                        if (emvManager != null) {
+                                            emvManager.stopTransaction();
+                                        }
+                                        dispatchPaymentCallback("CANCELLED", "CARD", null, getString(R.string.trans_user_cancel));
+                                        finish();
                                     }
                                 }
                             }
@@ -183,6 +208,23 @@ public class TransActivity extends BaseActivity {
 
     public static TransActivity getInstance() {
         return sInstance;
+    }
+
+    public void dispatchPaymentCallback(String status, String paymentMethod,
+                                        ReceiptBuilder.ReceiptData receiptData, String errorMessage) {
+        if (paymentCallbackDispatched) {
+            return;
+        }
+        paymentCallbackDispatched = true;
+        PaymentCallbackDispatcher.dispatch(TransActivity.this, paymentOrder, status, paymentMethod, receiptData, errorMessage);
+    }
+
+    public void showOnlineAuthorizing() {
+        tvMessage1.setText(R.string.card_online_authorizing);
+        tvReaderStatus.setText(R.string.card_online_authorizing);
+        tvReaderHint.setText(R.string.card_online_authorizing_hint);
+        iv_present_hand.clearAnimation();
+        ll_light.setVisibility(View.GONE);
     }
 
     private Bundle getEncryptConfigByDupktTDES() {
@@ -308,11 +350,13 @@ public class TransActivity extends BaseActivity {
             int result;
             if (TransInitActivity.isPOISdk) {
                 if (emvPoiManager == null) {
+                    showTransactionStartFailed();
                     return;
                 }
                 result = emvPoiManager.startTransaction(bundle, emvListenerPoi);
             } else {
                 if (emvManager == null) {
+                    showTransactionStartFailed();
                     return;
                 }
                 result = emvManager.startTransaction(bundle, emvListener);
@@ -323,12 +367,34 @@ public class TransActivity extends BaseActivity {
 
             if (PosEmvErrorCode.EXCEPTION_ERROR == result) {
                 Toast.makeText(this, R.string.toast_trans_error, Toast.LENGTH_LONG).show();
+                showTransactionStartFailed();
             } else if (PosEmvErrorCode.EMV_ENCRYPT_ERROR == result) {
                 Toast.makeText(this, R.string.toast_encrypt_error, Toast.LENGTH_LONG).show();
+                showTransactionStartFailed();
+            } else if (result != 0) {
+                Toast.makeText(this, R.string.toast_trans_error, Toast.LENGTH_LONG).show();
+                showTransactionStartFailed();
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showTransactionStartFailed();
         }
+    }
+
+    private void showTransactionStartFailed() {
+        if (transactionFinishing || isFinishing()) {
+            return;
+        }
+        transactionFinishing = true;
+        iv_present_hand.clearAnimation();
+        ll_light.setVisibility(View.GONE);
+        Intent intent = new Intent(TransActivity.this, TransResultActivity.class);
+        intent.putExtra(TransResult_Code, -1);
+        intent.putExtra(TransResult_Amount, eAmount);
+        intent.putExtra(CURRENCY_TAG, currency);
+        PaymentOrder.put(intent, paymentOrder);
+        startActivity(intent);
+        finish();
     }
 
 

@@ -9,6 +9,7 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -18,17 +19,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kozen.component.constant.KeyboardConstant;
 import com.kozen.component.keyboard.InputCallback;
 import com.kozen.component_client.ComponentEngine;
-import com.kozen.financial.constant.ConstantPrinter;
+import com.kozen.financial.constant.errorcode.PrinterError;
 import com.kozen.quickstartks.emv.utils.EmvCard;
 import com.kozen.quickstartks.emv.utils.Utility;
 import com.kozen.quickstartks.utils.DialogUtils;
-import com.kozen.quickstartks.utils.ScreenUtils;
 import com.kozen.quickstartks.utils.SecondScreenUtils;
 import com.kozen.quickstartks.utils.Utils;
+import com.pos.sdk.printer.POIPrinterManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -40,6 +42,7 @@ public class TransScanResultActivity extends BaseActivity {
     private View reslut_line;
     private String mAmount;
     private SoundPool mSoundPool;
+    private boolean isPrinting = false;
 
     private ReceiptBuilder.ReceiptData receiptData;
 
@@ -47,21 +50,35 @@ public class TransScanResultActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trans_result);
-        if (getSupportActionBar().isShowing() && ScreenUtils.getScreenHeight() <= 480) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         int code = getIntent().getIntExtra(TransActivity.TransResult_Code, -1);
         int Card_Type = getIntent().getIntExtra(TransActivity.TransResult_Card_Type, 0);
         mAmount = getIntent().getStringExtra(TransActivity.TransResult_Amount);
         String currency = getIntent().getStringExtra(Utils.CURRENCY_TAG);
+        PaymentOrder paymentOrder = PaymentOrder.get(getIntent());
         byte[] data = getIntent().getByteArrayExtra(TransActivity.TransResult_Data);
         ImageView imageView = findViewById(R.id.iv_result_image);
         reslut_line = findViewById(R.id.reslut_line);
         TextView tv_result = findViewById(R.id.tv_result);
         TextView tv_card_number = findViewById(R.id.tv_card_number);
         TextView tv_card_user = findViewById(R.id.tv_card_user);
+        TextView tv_result_detail_title = findViewById(R.id.tv_result_detail_title);
+        TextView tv_result_primary_label = findViewById(R.id.tv_result_primary_label);
+        TextView tv_result_secondary_label = findViewById(R.id.tv_result_secondary_label);
+        LinearLayout row_result_secondary = findViewById(R.id.row_result_secondary);
         tv_card_number.setText(R.string.sub_trans_payent_code);
-        tv_card_user.setVisibility(View.INVISIBLE);
+        tv_result_detail_title.setText(R.string.result_order_details);
+        tv_result_primary_label.setText(R.string.result_payment_code);
+        tv_result_secondary_label.setText(R.string.result_order_no);
+        if (paymentOrder != null && !TextUtils.isEmpty(paymentOrder.orderNo)) {
+            tv_card_user.setText(paymentOrder.orderNo);
+            tv_card_user.setVisibility(View.VISIBLE);
+        } else {
+            row_result_secondary.setVisibility(View.GONE);
+            reslut_line.setVisibility(View.GONE);
+        }
         TextView tv_amount = findViewById(R.id.tv_amount);
         tv_result_confirm = findViewById(R.id.tv_result_confirm);
         sl_receipt = findViewById(R.id.sl_receipt);
@@ -100,10 +117,11 @@ public class TransScanResultActivity extends BaseActivity {
         }
 
         mAmount = (USD_TAG.equals(currency) ? "$" : "€") + mAmount;
-        receiptData = ReceiptBuilder.fromTransaction(cardNo, cardHolder, cardBrand, expiry, mAmount, "QR SALE");
+        receiptData = ReceiptBuilder.fromTransaction(cardNo, cardHolder, cardBrand, expiry, mAmount, "SALE", paymentOrder, true);
         bindReceiptViews(findViewById(android.R.id.content), receiptData);
 //        mAmount = (USD_TAG.equals(currency) ? "$" : "€") + mAmount;
         if (code == 0) {
+            PaymentCallbackDispatcher.dispatch(TransScanResultActivity.this, paymentOrder, "SUCCESS", "QR", receiptData, "");
             playSound();
             if (TransInitActivity.isExistSecScreen) {
                 SecondScreenUtils.showView(TransScanResultActivity.this, R.layout.second_trans_result_success, mAmount);
@@ -118,59 +136,83 @@ public class TransScanResultActivity extends BaseActivity {
             tv_result_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (isPrinting) {
+                        return;
+                    }
+                    isPrinting = true;
+                    tv_result_confirm.setEnabled(false);
                     sl_receipt.scrollTo(0, 0);
                     slideUp(content);
-//                String data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa";
-//                Printer.printImage(TransResultActivity.this, Printer.generateBitmap(TransResultActivity.this,data,"fonts/SBSansCondMonoRegular.ttf"));
-//                    Printer.printImage(TransResultActivity.this, layoutToBitmap(content), new Printer.PrintFinish() {
-//                    View viewBitmap = LayoutInflater.from(TransResultActivity.this).inflate(R.layout.receipt_content, null);
+
+                    if ("K1362".equals(Build.MODEL)) {
+                        content.clearAnimation();
+                        finishPrinting();
+                        Toast.makeText(TransScanResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Bitmap receiptBitmap;
+                    try {
+                        receiptBitmap = layoutToBitmap(TransScanResultActivity.this);
+                    } catch (Exception e) {
+                        content.clearAnimation();
+                        finishPrinting();
+                        Toast.makeText(TransScanResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     if (TransInitActivity.isPOISdk) {
-                        PrinterPOI.printImage(TransScanResultActivity.this, layoutToBitmap(TransScanResultActivity.this), new PrinterPOI.PrintFinish() {
+                        PrinterPOI.printImage(TransScanResultActivity.this, receiptBitmap, new PrinterPOI.PrintFinish() {
                             @Override
                             public void onSuccess(String data) {
+                                content.clearAnimation();
+                                finishPrinting();
                             }
 
                             @Override
                             public void onError(int errorCode) {
                                 content.clearAnimation();
-                                if (ConstantPrinter.STATUS_NO_PAPER == errorCode) {
+                                finishPrinting();
+                                if (POIPrinterManager.ERROR_NO_PAPER == errorCode) {
                                     DialogUtils.showAlertDialogCenter(TransScanResultActivity.this, new DialogUtils.DialogCallback() {
                                         @Override
                                         public void onConfirm() {
-
                                         }
 
                                         @Override
                                         public void onCancel() {
-
                                         }
                                     });
+                                } else {
+                                    Toast.makeText(TransScanResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
                                 }
 
                             }
                         });
                     } else {
-                        Printer.printImage(TransScanResultActivity.this, layoutToBitmap(TransScanResultActivity.this), new Printer.PrintFinish() {
+                        Printer.printImage(TransScanResultActivity.this, receiptBitmap, new Printer.PrintFinish() {
                             @Override
                             public void onSuccess(String data) {
+                                content.clearAnimation();
+                                finishPrinting();
                             }
 
                             @Override
                             public void onError(int errorCode) {
                                 content.clearAnimation();
-                                if (ConstantPrinter.STATUS_NO_PAPER == errorCode) {
+                                finishPrinting();
+                                if (PrinterError.PRINTER_ERROR_NO_PAPER == errorCode) {
                                     DialogUtils.showAlertDialogCenter(TransScanResultActivity.this, new DialogUtils.DialogCallback() {
                                         @Override
                                         public void onConfirm() {
-
                                         }
 
                                         @Override
                                         public void onCancel() {
-
                                         }
                                     });
+                                } else {
+                                    Toast.makeText(TransScanResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
                                 }
 
                             }
@@ -195,9 +237,13 @@ public class TransScanResultActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        sl_receipt.setVisibility(View.GONE);
-        reslut_line.setVisibility(View.GONE);
-        tv_result_confirm.setVisibility(View.GONE);
+        if (Build.MODEL != null) {
+            if ("L200".equals(Build.MODEL) || "P17".equals(Build.MODEL) || Build.MODEL.startsWith("P12") || "K1211".equals(Build.MODEL)) {
+                sl_receipt.setVisibility(View.GONE);
+                reslut_line.setVisibility(View.GONE);
+                tv_result_confirm.setVisibility(View.GONE);
+            }
+        }
 
         try {
             if ("K1211".equals(Build.MODEL)) {
@@ -239,6 +285,13 @@ public class TransScanResultActivity extends BaseActivity {
         animate.setDuration(3500);
         animate.setFillBefore(true);
         view.startAnimation(animate);
+    }
+
+    private void finishPrinting() {
+        isPrinting = false;
+        if (tv_result_confirm != null) {
+            tv_result_confirm.setEnabled(true);
+        }
     }
 
     private void playSound() {
@@ -299,6 +352,8 @@ public class TransScanResultActivity extends BaseActivity {
         setText(root, R.id.tv_receipt_mid, d.mid);
         setText(root, R.id.tv_receipt_tid, d.tid);
         setText(root, R.id.tv_receipt_operator, d.operatorNo);
+        setText(root, R.id.tv_receipt_order_no, d.orderNo);
+        setText(root, R.id.tv_receipt_order_info, d.orderInfo);
         setText(root, R.id.tv_receipt_card, d.cardNo);
         setText(root, R.id.tv_receipt_brand, d.cardBrand);
         setText(root, R.id.tv_receipt_expiry, d.expiry);
@@ -310,12 +365,29 @@ public class TransScanResultActivity extends BaseActivity {
         setText(root, R.id.tv_receipt_datetime, d.dateTime);
         setText(root, R.id.tv_receipt_amount, d.amount);
         setText(root, R.id.tv_receipt_total, d.amount);
+        setText(root, R.id.tv_receipt_barcode_num, TextUtils.isEmpty(d.orderNo) ? d.refNo : d.orderNo);
+        setVisible(root, R.id.row_receipt_order_no, !TextUtils.isEmpty(d.orderNo));
+        setVisible(root, R.id.row_receipt_order_info, !TextUtils.isEmpty(d.orderInfo));
+        setVisible(root, R.id.row_receipt_card, !d.qrPayment && !TextUtils.isEmpty(d.cardNo));
+        setVisible(root, R.id.row_receipt_brand, !d.qrPayment && !TextUtils.isEmpty(d.cardBrand));
+        setVisible(root, R.id.row_receipt_expiry, !d.qrPayment && !TextUtils.isEmpty(d.expiry));
+        setVisible(root, R.id.row_receipt_customer, !d.qrPayment && !TextUtils.isEmpty(d.cardHolder));
+        setVisible(root, R.id.tv_receipt_signature_label, !d.qrPayment);
+        setVisible(root, R.id.view_receipt_signature_line, !d.qrPayment);
+        setVisible(root, R.id.tv_receipt_signature_ack, !d.qrPayment);
     }
 
     private static void setText(View root, int id, String text) {
         View v = root.findViewById(id);
         if (v instanceof TextView) {
             ((TextView) v).setText(text == null ? "" : text);
+        }
+    }
+
+    private static void setVisible(View root, int id, boolean visible) {
+        View v = root.findViewById(id);
+        if (v != null) {
+            v.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.kozen.quickstartks.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,38 +18,167 @@ import com.kozen.quickstartks.TransInitActivity;
 public class SecondScreenUtils {
 
     private static String TAG = "SecondScreenUtils";
+    private static final String NO_SECOND_SCREEN_SN_PREFIX = "AA66A23";
     private String RES_ROOT_PATH =
             "${Environment.getExternalStorageDirectory().absolutePath}/ViceScreen";
     private int brightnessState = 0; //屏幕亮度等级，第一次默认60%
-    private static ISecondaryScreen secondaryScreen = TransInitActivity.isComponenInit ? ComponentEngine.INSTANCE.getSecondaryScreenManager() : null;
+    private static ISecondaryScreen secondaryScreen = null;
+
+    private static ISecondaryScreen getSecondaryScreen() {
+        if (!TransInitActivity.isComponenInit) {
+            secondaryScreen = null;
+            return null;
+        }
+        if (secondaryScreen == null) {
+            secondaryScreen = ComponentEngine.INSTANCE.getSecondaryScreenManager();
+        }
+        return secondaryScreen;
+    }
+
+    public static boolean isAvailable() {
+        return isAvailable(TransInitActivity.getInstance());
+    }
+
+    public static boolean isAvailable(Context context) {
+        String serialNo = getDeviceSerialNo();
+        if (serialNo != null && serialNo.toUpperCase().startsWith(NO_SECOND_SCREEN_SN_PREFIX)) {
+            Log.i(TAG, "secondary screen disabled by SN prefix, sn=" + maskSerial(serialNo));
+            secondaryScreen = null;
+            return false;
+        }
+        ISecondaryScreen screen = getSecondaryScreen();
+        if (screen == null) {
+            return false;
+        }
+        try {
+            int ret = screen.setBrightness(100);
+            int[] resolution = screen.getScreenResolution();
+            boolean available = ret == 0 && isValidResolution(resolution);
+            Log.i(TAG, "secondary screen probe ret=" + ret
+                    + ", resolution=" + resolutionToString(resolution)
+                    + ", available=" + available);
+            if (!available) {
+                secondaryScreen = null;
+            }
+            return available;
+        } catch (Exception e) {
+            Log.e(TAG, "secondary screen probe failed", e);
+            secondaryScreen = null;
+            return false;
+        }
+    }
+
+    private static int[] getScreenResolution() {
+        ISecondaryScreen screen = getSecondaryScreen();
+        if (screen == null) {
+            return null;
+        }
+        try {
+            int[] resolution = screen.getScreenResolution();
+            if (isValidResolution(resolution)) {
+                return resolution;
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "secondary screen unavailable", e);
+            secondaryScreen = null;
+        }
+        return null;
+    }
+
+    private static String getDeviceSerialNo() {
+        String serialNo = getSystemProperty("ro.serialno");
+        if (!isUsableSerial(serialNo)) {
+            serialNo = getSystemProperty("ro.boot.serialno");
+        }
+        if (!isUsableSerial(serialNo)) {
+            try {
+                serialNo = Build.getSerial();
+            } catch (Exception e) {
+                Log.d(TAG, "Build.getSerial unavailable: " + e.getMessage());
+            }
+        }
+        if (!isUsableSerial(serialNo)) {
+            serialNo = Build.SERIAL;
+        }
+        return isUsableSerial(serialNo) ? serialNo.trim() : "";
+    }
+
+    private static String getSystemProperty(String key) {
+        try {
+            Class<?> systemProperties = Class.forName("android.os.SystemProperties");
+            java.lang.reflect.Method get = systemProperties.getMethod("get", String.class);
+            Object value = get.invoke(null, key);
+            return value == null ? "" : String.valueOf(value);
+        } catch (Exception e) {
+            Log.d(TAG, "SystemProperties.get failed for " + key + ": " + e.getMessage());
+            return "";
+        }
+    }
+
+    private static boolean isUsableSerial(String serialNo) {
+        return serialNo != null
+                && serialNo.trim().length() > 0
+                && !"unknown".equalsIgnoreCase(serialNo.trim());
+    }
+
+    private static String maskSerial(String serialNo) {
+        if (serialNo == null) {
+            return "";
+        }
+        String value = serialNo.trim();
+        if (value.length() <= 7) {
+            return value;
+        }
+        return value.substring(0, 7) + "***";
+    }
+
+    private static boolean isValidResolution(int[] resolution) {
+        return resolution != null && resolution.length >= 2 && resolution[0] > 0 && resolution[1] > 0;
+    }
+
+    private static String resolutionToString(int[] resolution) {
+        if (resolution == null) {
+            return "null";
+        }
+        if (resolution.length < 2) {
+            return "length=" + resolution.length;
+        }
+        return resolution[0] + "x" + resolution[1];
+    }
+
+    private static void markUnavailable(String reason) {
+        Log.w(TAG, "secondary screen unavailable: " + reason);
+        secondaryScreen = null;
+        TransInitActivity.isExistSecScreen = false;
+    }
 
     /**
      * 按一次上电，再按下电
      */
     public static void powerControl(boolean powerState) {
-        if (SecondScreenUtils.secondaryScreen != null) {
-            SecondScreenUtils.secondaryScreen.power(powerState);
+        ISecondaryScreen screen = getSecondaryScreen();
+        if (screen != null) {
+            screen.power(powerState);
         }
     }
 
-    public static void showPic() {
+    public static boolean showPic() {
         String picPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/ViceScreen" + "/img4.png";
-        if (SecondScreenUtils.secondaryScreen != null) {
-            secondaryScreen.showPic(picPath);
+        ISecondaryScreen screen = getSecondaryScreen();
+        if (screen != null) {
+            screen.showPic(picPath);
+            return true;
         }
+        return false;
     }
 
-    public static void showView(Context context, int layoutId) {
-        if (SecondScreenUtils.secondaryScreen != null) {
-            int[] viceScreenWidth =
-                    SecondScreenUtils.secondaryScreen.getScreenResolution();
-//        (0) ?: 378
-            int[] viceScreenHeight =
-                    SecondScreenUtils.secondaryScreen.getScreenResolution();
-            //(1) ?: 172
+    public static boolean showView(Context context, int layoutId) {
+        ISecondaryScreen screen = getSecondaryScreen();
+        int[] resolution = getScreenResolution();
+        if (screen != null && resolution != null) {
             View layoutV =
-                    layoutToView(context, layoutId, viceScreenWidth[0], viceScreenHeight[1]);
-            SecondScreenUtils.secondaryScreen.show(layoutV, new IResultCallback() {
+                    layoutToView(context, layoutId, resolution[0], resolution[1]);
+            screen.show(layoutV, new IResultCallback() {
                         @Override
                         public void onSuccess() {
 
@@ -56,27 +186,24 @@ public class SecondScreenUtils {
 
                         @Override
                         public void onFailure(int i, String s) {
-
+                            markUnavailable("showView failed code=" + i + ", msg=" + s);
                         }
                     }
             );
+            return true;
         }
-
+        return false;
     }
 
-    public static void showQrView(Context context, int layoutId, String text) {
-        if (SecondScreenUtils.secondaryScreen != null) {
-            int[] viceScreenWidth =
-                    SecondScreenUtils.secondaryScreen.getScreenResolution();
-//        (0) ?: 378
-            int[] viceScreenHeight =
-                    SecondScreenUtils.secondaryScreen.getScreenResolution();
-            //(1) ?: 172
+    public static boolean showQrView(Context context, int layoutId, String text) {
+        ISecondaryScreen screen = getSecondaryScreen();
+        int[] resolution = getScreenResolution();
+        if (screen != null && resolution != null) {
             View layoutV =
-                    layoutToView(context, layoutId, viceScreenWidth[0], viceScreenHeight[1]);
+                    layoutToView(context, layoutId, resolution[0], resolution[1]);
             TextView textView = layoutV.findViewById(R.id.tv_amount);
             textView.setText(text);
-            SecondScreenUtils.secondaryScreen.show(layoutV, new IResultCallback() {
+            screen.show(layoutV, new IResultCallback() {
                         @Override
                         public void onSuccess() {
 
@@ -84,22 +211,25 @@ public class SecondScreenUtils {
 
                         @Override
                         public void onFailure(int i, String s) {
-
+                            markUnavailable("showQrView failed code=" + i + ", msg=" + s);
                         }
                     }
             );
+            return true;
         }
-
+        return false;
     }
 
-    public static void showView(Context context, int layoutId, String text) {
-        if (SecondScreenUtils.secondaryScreen != null) {
+    public static boolean showView(Context context, int layoutId, String text) {
+        ISecondaryScreen screen = getSecondaryScreen();
+        int[] resolution = getScreenResolution();
+        if (screen != null && resolution != null) {
             View layoutV =
-                    layoutToView(context, layoutId, 378, 172);
+                    layoutToView(context, layoutId, resolution[0], resolution[1]);
             TextView textView = layoutV.findViewById(R.id.tv_amount);
             Log.e(TAG, "showView===>>>text:" + text);
             textView.setText(text);
-            SecondScreenUtils.secondaryScreen.show(layoutV, new IResultCallback() {
+            screen.show(layoutV, new IResultCallback() {
                         @Override
                         public void onSuccess() {
 
@@ -107,19 +237,23 @@ public class SecondScreenUtils {
 
                         @Override
                         public void onFailure(int i, String s) {
-
+                            markUnavailable("showView text failed code=" + i + ", msg=" + s);
                         }
                     }
             );
+            return true;
         }
-
+        return false;
     }
 
-    public static void showDefaultImage() {
+    public static boolean showDefaultImage() {
         String newPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/default.png";
-        if (SecondScreenUtils.secondaryScreen != null) {
-            SecondScreenUtils.secondaryScreen.showPic(newPath);
+        ISecondaryScreen screen = getSecondaryScreen();
+        if (screen != null) {
+            screen.showPic(newPath);
+            return true;
         }
+        return false;
 
     }
 

@@ -15,19 +15,19 @@
         android:background="@color/card"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingTop="14dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="14dp">
+        android:paddingLeft="@dimen/pos_header_padding_horizontal"
+        android:paddingTop="@dimen/pos_header_padding_vertical"
+        android:paddingRight="@dimen/pos_header_padding_horizontal"
+        android:paddingBottom="@dimen/pos_header_padding_vertical">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="@dimen/pos_logo_size"
+            android:layout_height="@dimen/pos_logo_size"
             android:background="@drawable/bg_logo_circle_dark"
             android:gravity="center"
             android:text="@string/brand_logo_initial"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="@dimen/pos_logo_text_size"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/brand_company"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="@dimen/pos_brand_text_size"
                 android:textStyle="bold" />
 
             <TextView
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/header_transaction_detail"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
         </LinearLayout>
 
         <LinearLayout
@@ -59,10 +59,10 @@
             android:background="@drawable/bg_badge_green"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingLeft="12dp"
-            android:paddingTop="7dp"
-            android:paddingRight="14dp"
-            android:paddingBottom="7dp">
+            android:paddingLeft="@dimen/pos_chip_padding_horizontal"
+            android:paddingTop="@dimen/pos_chip_padding_vertical"
+            android:paddingRight="@dimen/pos_chip_padding_horizontal"
+            android:paddingBottom="@dimen/pos_chip_padding_vertical">
 
             <View
                 android:layout_width="8dp"
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/status_paid"
                 android:textColor="@color/badge_green_text"
-                android:textSize="12sp"
+                android:textSize="@dimen/pos_header_subtitle_text_size"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -92,18 +92,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="20dp">
+            android:paddingLeft="@dimen/result_content_padding_horizontal"
+            android:paddingRight="@dimen/result_content_padding_horizontal"
+            android:paddingBottom="@dimen/result_content_padding_bottom">
 
             <!-- Dark hero result card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/result_hero_margin_top"
                 android:background="@drawable/bg_card_dark"
                 android:orientation="vertical"
-                android:padding="22dp">
+                android:padding="@dimen/result_hero_padding">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -113,8 +113,8 @@
 
                     <ImageView
                         android:id="@+id/iv_result_image"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="@dimen/result_icon_size"
+                        android:layout_height="@dimen/result_icon_size"
                         android:adjustViewBounds="true"
                         android:scaleType="centerInside"
                         android:src="@drawable/result_success" />
@@ -122,7 +122,7 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="@dimen/result_text_margin_start"
                         android:layout_weight="1"
                         android:orientation="vertical">
 
@@ -131,16 +131,16 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/on_dark"
-                            android:textSize="24sp"
+                            android:textSize="@dimen/result_title_text_size"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:layout_marginTop="@dimen/result_subtitle_margin_top"
                             android:text="@string/result_transaction_done"
                             android:textColor="@color/on_dark_dim"
-                            android:textSize="13sp" />
+                            android:textSize="@dimen/result_subtitle_text_size" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -148,23 +148,24 @@
                     android:id="@+id/tv_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="@dimen/result_amount_margin_top"
                     android:textColor="@color/on_dark"
-                    android:textSize="44sp"
+                    android:textSize="@dimen/result_amount_text_size"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_result_detail_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="@dimen/result_receipt_chip_margin_top"
                     android:background="@drawable/bg_chip_dark"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="8dp"
-                    android:paddingRight="16dp"
-                    android:paddingBottom="8dp"
+                    android:paddingLeft="@dimen/result_receipt_chip_padding_horizontal"
+                    android:paddingTop="@dimen/result_receipt_chip_padding_vertical"
+                    android:paddingRight="@dimen/result_receipt_chip_padding_horizontal"
+                    android:paddingBottom="@dimen/result_receipt_chip_padding_vertical"
                     android:text="@string/result_receipt_generated"
                     android:textColor="@color/on_dark"
-                    android:textSize="13sp"
+                    android:textSize="@dimen/result_receipt_chip_text_size"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -173,69 +174,73 @@
                 android:id="@+id/result_data_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="@dimen/result_detail_margin_top"
                 android:background="@drawable/bg_gray_stroke"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="@dimen/result_detail_padding">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/result_order_details"
                     android:textColor="@color/text_primary"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/result_detail_title_text_size"
                     android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/row_result_primary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="@dimen/result_detail_row_margin_top"
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_result_primary_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/trans_result_card_num"
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/result_detail_text_size" />
 
                     <TextView
                         android:id="@+id/tv_card_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/result_detail_text_size" />
                 </LinearLayout>
 
                 <View
                     android:id="@+id/reslut_line"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
+                    android:layout_marginTop="@dimen/result_divider_margin_vertical"
+                    android:layout_marginBottom="@dimen/result_divider_margin_vertical"
                     android:background="@color/divider" />
 
                 <LinearLayout
+                    android:id="@+id/row_result_secondary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
+                        android:id="@+id/tv_result_secondary_label"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="@string/trans_result_customer"
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/result_detail_text_size" />
 
                     <TextView
                         android:id="@+id/tv_card_user"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/result_detail_text_size" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -243,21 +248,21 @@
                 android:id="@+id/tv_result_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="@dimen/result_print_margin_top"
                 android:background="@drawable/blue_btn"
                 android:gravity="center"
-                android:padding="16dp"
+                android:padding="@dimen/result_print_padding"
                 android:text="@string/trans_result_print"
                 android:textAllCaps="false"
                 android:textColor="@color/on_yellow"
-                android:textSize="17sp"
+                android:textSize="@dimen/result_print_text_size"
                 android:textStyle="bold" />
 
             <ScrollView
                 android:id="@+id/sl_receipt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/result_receipt_margin_top"
                 android:background="@drawable/bg_gray_stroke2"
                 android:scrollbars="none">
 

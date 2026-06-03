@@ -22,19 +22,19 @@
         android:background="@color/card"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="18dp"
-        android:paddingTop="14dp"
-        android:paddingRight="18dp"
-        android:paddingBottom="14dp">
+        android:paddingLeft="@dimen/pos_header_padding_horizontal"
+        android:paddingTop="@dimen/pos_header_padding_vertical"
+        android:paddingRight="@dimen/pos_header_padding_horizontal"
+        android:paddingBottom="@dimen/pos_header_padding_vertical">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="@dimen/pos_logo_size"
+            android:layout_height="@dimen/pos_logo_size"
             android:background="@drawable/bg_logo_circle_dark"
             android:gravity="center"
             android:text="@string/brand_logo_initial"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="@dimen/pos_logo_text_size"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -45,19 +45,21 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_order_badge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/brand_company"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="@dimen/pos_brand_text_size"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tv_order_summary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/header_counter"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
         </LinearLayout>
 
         <LinearLayout
@@ -83,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/status_online"
                 android:textColor="@color/badge_green_text"
-                android:textSize="12sp"
+                android:textSize="@dimen/pos_header_subtitle_text_size"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -91,36 +93,36 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginStart="@dimen/pos_title_margin_start"
+        android:layout_marginTop="@dimen/pos_title_margin_top"
         android:text="@string/header_amount_input_title"
         android:textColor="@color/text_primary"
-        android:textSize="26sp"
+        android:textSize="@dimen/pos_title_text_size"
         android:textStyle="bold" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="@dimen/pos_title_margin_start"
         android:layout_marginTop="2dp"
         android:text="@string/header_amount_input_subtitle"
         android:textColor="@color/text_secondary"
-        android:textSize="13sp" />
+        android:textSize="@dimen/pos_subtitle_text_size" />
 
     <!-- Dark amount card -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/pos_page_margin"
+        android:layout_marginTop="@dimen/pos_amount_card_margin_top"
+        android:layout_marginEnd="@dimen/pos_page_margin"
         android:background="@drawable/bg_card_dark"
         android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingTop="16dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="16dp">
+        android:paddingLeft="@dimen/pos_amount_card_padding_left"
+        android:paddingTop="@dimen/pos_amount_card_padding_top"
+        android:paddingRight="@dimen/pos_amount_card_padding_right"
+        android:paddingBottom="@dimen/pos_amount_card_padding_bottom">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -134,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_amount_due"
                 android:textColor="@color/on_dark_dim"
-                android:textSize="13sp" />
+                android:textSize="@dimen/pos_subtitle_text_size" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,7 +153,7 @@
                     android:includeFontPadding="false"
                     android:text="$"
                     android:textColor="@color/orange_solid"
-                    android:textSize="28sp"
+                    android:textSize="@dimen/pos_amount_currency_text_size"
                     android:textStyle="bold" />
 
                 <EditText
@@ -169,7 +171,7 @@
                     android:paddingBottom="0dp"
                     android:textColor="@color/orange_solid"
                     android:textColorHint="#66FFFFFF"
-                    android:textSize="40sp"
+                    android:textSize="@dimen/pos_amount_text_size"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
@@ -185,13 +187,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip_dark"
-                android:paddingLeft="14dp"
-                android:paddingTop="8dp"
-                android:paddingRight="14dp"
-                android:paddingBottom="8dp"
+                android:paddingLeft="@dimen/pos_chip_padding_horizontal"
+                android:paddingTop="@dimen/pos_chip_padding_vertical"
+                android:paddingRight="@dimen/pos_chip_padding_horizontal"
+                android:paddingBottom="@dimen/pos_chip_padding_vertical"
                 android:text="@string/label_manual_input"
                 android:textColor="@color/on_dark"
-                android:textSize="12sp"
+                android:textSize="@dimen/pos_header_subtitle_text_size"
                 android:textStyle="bold" />
 
             <TextView
@@ -199,13 +201,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_badge_orange"
-                android:paddingLeft="14dp"
+                android:paddingLeft="@dimen/pos_chip_padding_horizontal"
                 android:paddingTop="6dp"
-                android:paddingRight="14dp"
+                android:paddingRight="@dimen/pos_chip_padding_horizontal"
                 android:paddingBottom="6dp"
                 android:text="@string/label_demo_order_no"
                 android:textColor="@color/orange_text"
-                android:textSize="12sp"
+                android:textSize="@dimen/pos_header_subtitle_text_size"
                 android:textStyle="bold" />
         </LinearLayout>
     </LinearLayout>
@@ -215,16 +217,16 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="@dimen/pos_page_margin"
+        android:layout_marginTop="@dimen/pos_order_card_margin_top"
+        android:layout_marginEnd="@dimen/pos_page_margin"
         android:background="@drawable/bg_gray_stroke"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="18dp"
-        android:paddingTop="12dp"
-        android:paddingRight="18dp"
-        android:paddingBottom="12dp">
+        android:paddingLeft="@dimen/pos_order_card_padding_horizontal"
+        android:paddingTop="@dimen/pos_order_card_padding_vertical"
+        android:paddingRight="@dimen/pos_order_card_padding_horizontal"
+        android:paddingBottom="@dimen/pos_order_card_padding_vertical">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -237,7 +239,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_current_order"
                 android:textColor="@color/text_primary"
-                android:textSize="15sp"
+                android:textSize="@dimen/pos_order_title_text_size"
                 android:textStyle="bold" />
 
             <TextView
@@ -246,15 +248,16 @@
                 android:layout_marginTop="2dp"
                 android:text="@string/label_demo_items"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
         </LinearLayout>
 
         <TextView
+            android:id="@+id/tv_order_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$24.80"
             android:textColor="@color/text_primary"
-            android:textSize="22sp"
+            android:textSize="@dimen/pos_order_amount_text_size"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -264,13 +267,13 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="@dimen/pos_page_margin"
+        android:layout_marginTop="@dimen/pos_keypad_margin_top"
+        android:layout_marginRight="@dimen/pos_page_margin"
+        android:layout_marginBottom="@dimen/pos_keypad_margin_bottom"
         android:layout_weight="1"
         app:cardBackgroundColor="@color/card"
-        app:cardCornerRadius="28dp"
+        app:cardCornerRadius="@dimen/pos_card_corner_radius"
         app:cardElevation="0dp"
         app:strokeColor="@color/divider"
         app:strokeWidth="1dp">
@@ -279,7 +282,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="@dimen/pos_keypad_padding">
 
             <TableLayout
                 android:id="@+id/tableLayout"
@@ -296,45 +299,45 @@
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_1"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="1"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_2"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="2"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_3"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="3"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
                 </TableRow>
@@ -347,45 +350,45 @@
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_4"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="4"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_5"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="5"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_6"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="6"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
                 </TableRow>
@@ -398,45 +401,45 @@
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_7"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="7"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_8"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="8"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_9"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="9"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
                 </TableRow>
@@ -449,44 +452,44 @@
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_dot"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
-                            android:text="."
+                            android:text="00"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_00_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <TextView
                             android:id="@+id/tv_0"
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key"
                             android:gravity="center"
                             android:onClick="onClick"
                             android:text="0"
                             android:textColor="@color/text_primary"
-                            android:textSize="26sp"
+                            android:textSize="@dimen/pos_key_text_size"
                             android:textStyle="bold" />
                     </FrameLayout>
 
                     <FrameLayout android:layout_height="match_parent">
                         <FrameLayout
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
+                            android:layout_width="@dimen/pos_key_size"
+                            android:layout_height="@dimen/pos_key_size"
                             android:layout_gravity="center"
                             android:background="@drawable/bg_key_del">
 
                             <ImageView
                                 android:id="@+id/iv_del"
-                                android:layout_width="28dp"
-                                android:layout_height="22dp"
+                                android:layout_width="@dimen/pos_delete_icon_width"
+                                android:layout_height="@dimen/pos_delete_icon_height"
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
                                 android:scaleType="fitCenter"
@@ -502,21 +505,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="@dimen/pos_continue_margin_top"
                 android:layout_marginEnd="4dp"
                 android:background="@drawable/blue_btn"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:letterSpacing="0.05"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
+                android:paddingTop="@dimen/pos_continue_padding_vertical"
+                android:paddingBottom="@dimen/pos_continue_padding_vertical"
                 android:stateListAnimator="@null"
                 android:text="@string/btn_continue"
                 android:textColor="@color/on_yellow"
-                android:textSize="17sp"
+                android:textSize="@dimen/pos_continue_text_size"
                 android:textStyle="bold"
                 app:backgroundTint="@null"
-                app:cornerRadius="28dp"
+                app:cornerRadius="@dimen/pos_card_corner_radius"
                 app:elevation="0dp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

@@ -70,10 +70,14 @@
 
     <string name="sub_trans_bank_card">Bank Card</string>
     <string name="sub_trans_pay_code">Payment Code</string>
+    <string name="sub_trans_qr_display">Display QR</string>
     <string name="sub_usd">USD</string>
     <string name="sub_eur">EUR</string>
     <string name="sub_trans_qr">Please show your payment code</string>
     <string name="sub_trans_qr_tip">Please place your payment code above the camera.</string>
+    <string name="scan_camera_switching">Camera unavailable. Switching camera...</string>
+    <string name="scan_camera_unavailable">Camera is unavailable. Please check camera permission or restart the device.</string>
+    <string name="scan_switch_camera">Switch camera</string>
     <string name="sub_trans_bank_tip">Please make payment using your bank card.</string>
     <string name="sub_trans_payent_code">payment code</string>
     <string name="sub_trans_fail">Payment failed!</string>
@@ -89,6 +93,8 @@
     <string name="sub_trans_code_tip">Please scan the Qr code.</string>
     <string name="sub_trans_code_tip3">Waiting customer scan Qr code.</string>
     <string name="sub_trans_code_tip2">Scan the Qr code.</string>
+    <string name="qr_display_title">Scan QR to pay</string>
+    <string name="qr_display_hint">Ask the customer to scan this QR code.</string>
     <string name="sub_trans_net">Please connect to the network</string>
 
     <!-- UI redesign — shared brand/header -->
@@ -116,6 +122,8 @@
     <string name="card_chip_label">Card</string>
     <string name="card_reading">Reading card…</string>
     <string name="card_keep_close">Keep the card near the reader</string>
+    <string name="card_online_authorizing">Online authorizing…</string>
+    <string name="card_online_authorizing_hint">Please wait while the payment is verified</string>
 
     <!-- PIN dialog -->
     <string name="pin_pay_label">Amount</string>
@@ -128,6 +136,9 @@
     <string name="result_transaction_done">Transaction completed</string>
     <string name="result_receipt_generated">Receipt generated</string>
     <string name="result_order_details">Order details</string>
+    <string name="result_qr_details">QR payment details</string>
+    <string name="result_payment_code">Payment code:</string>
+    <string name="result_order_no">Order No.:</string>
 
     <!-- Amount input screen -->
     <string name="label_amount_due">Amount due</string>

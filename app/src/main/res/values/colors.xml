@@ -46,10 +46,10 @@
     <!-- key colors (PIN keypad action keys) -->
     <color name="key_green_bg">#FFE8F7EF</color>
     <color name="key_green_text">#FF177346</color>
-    <color name="key_red_bg">#FFFDECEC</color>
-    <color name="key_red_text">#FFC93030</color>
-    <color name="key_yellow_bg">#FFFFF4D6</color>
-    <color name="key_yellow_text">#FFB07300</color>
+    <color name="key_red_bg">#FFFF2A2A</color>
+    <color name="key_red_text">#FFFFFFFF</color>
+    <color name="key_yellow_bg">#FFFFD400</color>
+    <color name="key_yellow_text">#FF202124</color>
 
     <!-- text on dark surfaces -->
     <color name="on_dark">#FFFFFFFF</color>

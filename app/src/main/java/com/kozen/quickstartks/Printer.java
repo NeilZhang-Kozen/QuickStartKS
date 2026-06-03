@@ -74,6 +74,7 @@ public class Printer {
 //            printerManager = new POIPrinterManager(context);
 //        }
         if (printerManager == null) {
+            printFinish.onError(-1);
             return;
         }
         printerManager.open();
@@ -111,6 +112,7 @@ public class Printer {
         };
         if (state == 4) {
             printerManager.close();
+            printFinish.onError(state);
             return;
         }
         printerManager.startPrint(listener);

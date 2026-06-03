@@ -21,6 +21,7 @@ local.properties
 apk/
 /app/release
 /app/build
+/thirdparty-demo/build
 
 # Keep dependency libraries under app/libs
 !app/libs/*.aar

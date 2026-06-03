@@ -1,122 +1,247 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_page_gradient"
+    android:orientation="vertical"
     tools:ignore="MissingDefaultResource">
 
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:background="@color/card"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/pos_header_padding_horizontal"
+        android:paddingTop="@dimen/pos_header_padding_vertical"
+        android:paddingRight="@dimen/pos_header_padding_horizontal"
+        android:paddingBottom="@dimen/pos_header_padding_vertical">
 
         <TextView
-            android:id="@+id/tvMessage1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/pos_logo_size"
+            android:layout_height="@dimen/pos_logo_size"
+            android:background="@drawable/bg_logo_circle_dark"
             android:gravity="center"
-            android:text="@string/sub_trans_code_tip2"
-            android:textColor="@color/text_primary"
-            android:textSize="22sp"
+            android:text="@string/brand_logo_initial"
+            android:textColor="@color/white"
+            android:textSize="@dimen/pos_logo_text_size"
             android:textStyle="bold" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            app:cardBackgroundColor="@color/card"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#33FFD60A"
-            app:strokeWidth="1dp">
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:text="@string/brand_company"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/pos_brand_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/header_secure_payment"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_green"
+            android:paddingLeft="@dimen/pos_chip_padding_horizontal"
+            android:paddingTop="@dimen/pos_chip_padding_vertical"
+            android:paddingRight="@dimen/pos_chip_padding_horizontal"
+            android:paddingBottom="@dimen/pos_chip_padding_vertical"
+            android:text="@string/sub_trans_qr_display"
+            android:textColor="@color/badge_green_text"
+            android:textSize="@dimen/pos_header_subtitle_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/qr_page_padding_horizontal"
+            android:paddingRight="@dimen/qr_page_padding_horizontal"
+            android:paddingBottom="@dimen/result_content_padding_bottom">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/qr_hero_margin_top"
+                android:background="@drawable/bg_card_dark"
                 android:orientation="vertical"
-                android:padding="24dp">
-
-                <ImageView
-                    android:id="@+id/iv_qr_payment"
-                    android:layout_width="220dp"
-                    android:layout_height="220dp"
-                    android:src="@drawable/icon_qr" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@color/divider" />
+                android:padding="@dimen/qr_hero_padding">
 
                 <TextView
+                    android:id="@+id/tvMessage1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_trans_amount"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                    android:text="@string/qr_display_title"
+                    android:textColor="@color/on_dark_dim"
+                    android:textSize="@dimen/result_subtitle_text_size" />
 
                 <TextView
                     android:id="@+id/tv_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="1500"
+                    android:layout_marginTop="@dimen/result_amount_margin_top"
+                    android:textColor="@color/on_dark"
+                    android:textSize="@dimen/result_amount_text_size"
+                    android:textStyle="bold"
+                    tools:text="$24.80" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/result_receipt_chip_margin_top"
+                    android:background="@drawable/bg_chip_dark"
+                    android:paddingLeft="@dimen/result_receipt_chip_padding_horizontal"
+                    android:paddingTop="@dimen/result_receipt_chip_padding_vertical"
+                    android:paddingRight="@dimen/result_receipt_chip_padding_horizontal"
+                    android:paddingBottom="@dimen/result_receipt_chip_padding_vertical"
+                    android:text="@string/sub_trans_qr_display"
+                    android:textColor="@color/on_dark"
+                    android:textSize="@dimen/result_receipt_chip_text_size"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/qr_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/qr_card_margin_top"
+                app:cardBackgroundColor="@color/card"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="@dimen/qr_card_padding">
+
+                    <ImageView
+                        android:id="@+id/iv_qr_payment"
+                        android:layout_width="@dimen/qr_image_size"
+                        android:layout_height="@dimen/qr_image_size"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_qr" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/qr_display_hint"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/result_detail_text_size" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/qr_detail_margin_top"
+                android:background="@drawable/bg_gray_stroke"
+                android:orientation="vertical"
+                android:padding="@dimen/result_detail_padding">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/result_order_details"
                     android:textColor="@color/text_primary"
-                    android:textSize="32sp"
+                    android:textSize="@dimen/result_detail_title_text_size"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tv_order_num"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="20240520111111"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="12sp" />
+                    android:layout_marginTop="@dimen/result_detail_row_margin_top"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tv_order_time"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/trans_order_num"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/result_detail_text_size" />
+
+                    <TextView
+                        android:id="@+id/tv_order_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/result_detail_text_size"
+                        tools:text="2026060227529917" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/result_divider_margin_vertical"
+                    android:layout_marginBottom="@dimen/result_divider_margin_vertical"
+                    android:background="@color/divider" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/trans_order_time"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/result_detail_text_size" />
+
+                    <TextView
+                        android:id="@+id/tv_order_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/result_detail_text_size"
+                        tools:text="2026-06-02 19:35:06" />
+                </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:src="@drawable/dot1" />
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/dot2" />
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/dot3" />
-
-            <ImageView
-                android:layout_width="14dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/dot4" />
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/qr_cancel_margin_top"
+                android:background="@drawable/blue_btn"
+                android:gravity="center"
+                android:padding="@dimen/result_print_padding"
+                android:text="@string/text_cancel"
+                android:textColor="@color/on_yellow"
+                android:textSize="@dimen/result_print_text_size"
+                android:textStyle="bold" />
         </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+    </ScrollView>
+</LinearLayout>

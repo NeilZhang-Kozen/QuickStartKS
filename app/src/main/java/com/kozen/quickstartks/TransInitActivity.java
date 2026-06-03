@@ -11,8 +11,11 @@ import static com.kozen.quickstartks.utils.Utils.USD_TAG;
 import static com.kozen.quickstartks.utils.Utils.TRANS_QR;
 
 import android.animation.ValueAnimator;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -24,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -50,6 +54,7 @@ import com.kozen.quickstartks.utils.PosUtils;
 import com.kozen.quickstartks.utils.ScreenUtils;
 import com.kozen.quickstartks.utils.SecondScreenUtils;
 import com.kozen.quickstartks.utils.SharePreferenceUtils;
+import com.kozen.quickstartks.utils.Utils;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -58,6 +63,7 @@ public class TransInitActivity extends BaseActivity {
 
     private static final String TAG = "TransActivity";
     private static final String ZERO_AMOUNT_TEXT = "0.00";
+    private static final int MAX_AMOUNT_CENTS_DIGITS = 7;
     private TextView tvMessage0, tvMessage1, tvMessage2, tvMessage3;
     private EditText edtAmount;
     private boolean isZeroAmountWarningShowing = false;
@@ -74,6 +80,10 @@ public class TransInitActivity extends BaseActivity {
     public static String currentCurrency = USD_TAG;
     private LinearLayout ll_cover = null;
     private int idleTime = 30 * 1000;
+    private PaymentOrder currentOrder;
+    private TextView tvOrderBadge;
+    private TextView tvOrderSummary;
+    private TextView tvOrderAmount;
 
     public static boolean isPhysicalKeyboard = false;
     public static boolean isPOISdk = true;
@@ -115,32 +125,34 @@ public class TransInitActivity extends BaseActivity {
         init();
         sInstance = new WeakReference<>(TransInitActivity.this);
         edtAmount = findViewById(R.id.edtAmount);
+        tvOrderBadge = findViewById(R.id.tv_order_badge);
+        tvOrderSummary = findViewById(R.id.tv_order_summary);
+        tvOrderAmount = findViewById(R.id.tv_order_amount);
         Button btn_init_next = findViewById(R.id.btn_init_next);
         ImageView iv_del = findViewById(R.id.iv_del);
+        View btnDelete = (View) iv_del.getParent();
         TableLayout tableLayout = findViewById(R.id.tableLayout);
         edtAmount.getPaint().setFlags(Paint.ANTI_ALIAS_FLAG | Paint.UNDERLINE_TEXT_FLAG);
-        iv_del.setOnClickListener(new View.OnClickListener() {
+        btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isZeroAmountWarningShowing) {
-                    isZeroAmountWarningShowing = false;
-                    edtAmount.setText("");
-                    return;
-                }
-                String amount = normalizeAmount(edtAmount.getText().toString());
-                if (ZERO_AMOUNT_TEXT.equals(amount)) {
-                    showZeroAmountWarning();
-                    return;
-                }
-                edtAmount.setText("");
+                animateDeleteButton(v);
+                deleteLastAmountDigit();
             }
         });
-        if ("K1211".equals(Build.MODEL) || "K1352".equals(Build.MODEL) || "K1141".equals(Build.MODEL)|| "K1362".equals(Build.MODEL)) {
+        btnDelete.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                animateDeleteButton(v);
+                isZeroAmountWarningShowing = false;
+                edtAmount.setText("");
+                return true;
+            }
+        });
+        if (isSecondScreenModel()) {
             showCover(false);
-            isExistSecScreen = true;
-        }else {
-            isExistSecScreen = false;
         }
+        isExistSecScreen = false;
         edtAmount.setShowSoftInputOnFocus(false);
         edtAmount.requestFocus();
         edtAmount.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -173,8 +185,9 @@ public class TransInitActivity extends BaseActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+                bindOrderSummary(currentOrder);
 
-                if (isExistSecScreen) {
+                if (shouldUseSecondScreen()) {
                     idleTimer.cancel();
                     idleTimer.start();
                     hideCover();
@@ -213,20 +226,29 @@ public class TransInitActivity extends BaseActivity {
                 }
                 edtAmount.setText(amount);
                 edtAmount.setSelection(edtAmount.getText().length());
-                if (isExistSecScreen) {
+                if (shouldUseSecondScreen()) {
                     DialogUtils.showProgressDialog(getString(R.string.waiting_select_currency), TransInitActivity.this);
-                    SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_currency, getString(R.string.sub_trans_amount) + " $" + amount);
+                    boolean shown = SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_currency, getString(R.string.sub_trans_amount) + " $" + amount);
+                    if (!shown) {
+                        DialogUtils.dismissProgressDialog();
+                        startCardTransaction(amount);
+                    }
                 } else {
-                    Intent intent = new Intent(TransInitActivity.this, TransSelectActivity.class);
-                    intent.putExtra("amount", amount);
-                    intent.putExtra(CURRENCY_TAG, currentCurrency);
-                    TransInitActivity.this.startActivity(intent);
+                    showMainScreenPaymentMethodDialog(amount);
 
                 }
 
             }
         });
+        handlePaymentIntent(getIntent());
 
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handlePaymentIntent(intent);
     }
 
     @Override
@@ -236,18 +258,17 @@ public class TransInitActivity extends BaseActivity {
             if (result.getContents() == null) {
                 // 用户取消了扫描
                 TRANS_QR = false;
+                PaymentCallbackDispatcher.dispatch(TransInitActivity.this, currentOrder, "CANCELLED", "QR", null, getString(R.string.trans_user_cancel));
             } else {
 
-                String amount = edtAmount.getText().toString();
-                if (TextUtils.isEmpty(amount)) {
-                    amount = "1500";
-                }
-                if (EUR_TAG == currentCurrency) {
-                    amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+                String amount = normalizeAmount(edtAmount.getText().toString());
+                if (EUR_TAG.equals(currentCurrency)) {
+                    amount = convertToEur(amount);
                 }
                 Intent intent = new Intent(TransInitActivity.this, TransScanResultActivity.class);
                 intent.putExtra(TransResult_Code, 0);
                 intent.putExtra(TransResult_Amount, amount);
+                PaymentOrder.put(intent, currentOrder);
 //                intent.putExtra(TransResult_Data, transData);
 //                intent.putExtra(TransResult_Card_Type, Card_Type);
                 intent.putExtra(CURRENCY_TAG, currentCurrency);
@@ -260,28 +281,61 @@ public class TransInitActivity extends BaseActivity {
     }
 
     public void onClick(View v) {
-        String new01 = ((TextView) v).getText().toString();
-        String old = edtAmount.getText().toString();
+        String key = ((TextView) v).getText().toString();
+        appendAmountDigits(key);
+    }
+
+    private void appendAmountDigits(String key) {
         if (isZeroAmountWarningShowing) {
             isZeroAmountWarningShowing = false;
-            old = "";
+            edtAmount.setText("");
         }
-        if (".".equals(new01) && old.contains(".")) {
+        if (key == null || !key.matches("\\d+")) {
             return;
         }
-        String data = old + new01;
-        if (data.startsWith("0") && !data.startsWith("0.")) {
-            return;
-        } else if (data.startsWith(".")) {
-            data = "0" + data;
-        }
-        int dotIndex = data.indexOf('.');
-        if (dotIndex >= 0 && data.length() - dotIndex - 1 > 2) {
+        String digits = digitsOnly(edtAmount.getText().toString());
+        if (digits.length() + key.length() > MAX_AMOUNT_CENTS_DIGITS) {
             return;
         }
-        edtAmount.setText(data);
+        digits = digits + key;
+        String stripped = digits.replaceFirst("^0+(?!$)", "");
+        edtAmount.setText(formatCents(stripped));
         edtAmount.setSelection(edtAmount.getText().length());
+    }
 
+    private void deleteLastAmountDigit() {
+        if (isZeroAmountWarningShowing) {
+            isZeroAmountWarningShowing = false;
+            edtAmount.setText("");
+            return;
+        }
+        String digits = digitsOnly(edtAmount.getText().toString());
+        if (digits.isEmpty()) {
+            showZeroAmountWarning();
+            return;
+        }
+        digits = digits.substring(0, digits.length() - 1);
+        if (digits.isEmpty() || Long.parseLong(digits) == 0L) {
+            edtAmount.setText("");
+        } else {
+            edtAmount.setText(formatCents(digits));
+            edtAmount.setSelection(edtAmount.getText().length());
+        }
+    }
+
+    private void animateDeleteButton(View view) {
+        view.animate().cancel();
+        view.animate()
+                .scaleX(1.14f)
+                .scaleY(1.14f)
+                .setDuration(80)
+                .withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        view.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    }
+                })
+                .start();
     }
 
     private void shakeAmount() {
@@ -305,17 +359,28 @@ public class TransInitActivity extends BaseActivity {
         if (TextUtils.isEmpty(amount)) {
             return ZERO_AMOUNT_TEXT;
         }
-        int dotIndex = amount.indexOf('.');
-        if (dotIndex < 0) {
-            return amount + ".00";
+        try {
+            return new java.math.BigDecimal(amount)
+                    .setScale(2, java.math.RoundingMode.DOWN)
+                    .toPlainString();
+        } catch (NumberFormatException e) {
+            return ZERO_AMOUNT_TEXT;
         }
-        int decimals = amount.length() - dotIndex - 1;
-        if (decimals == 0) {
-            return amount + "00";
-        } else if (decimals == 1) {
-            return amount + "0";
+    }
+
+    private String digitsOnly(String s) {
+        if (s == null) return "";
+        return s.replaceAll("[^0-9]", "");
+    }
+
+    private String formatCents(String digits) {
+        if (digits == null || digits.isEmpty()) return ZERO_AMOUNT_TEXT;
+        while (digits.length() < 3) {
+            digits = "0" + digits;
         }
-        return amount;
+        String whole = digits.substring(0, digits.length() - 2);
+        String frac = digits.substring(digits.length() - 2);
+        return whole + "." + frac;
     }
 
     void showCover(boolean isTimer) {
@@ -387,14 +452,14 @@ public class TransInitActivity extends BaseActivity {
     }
 
     public void onUSD(View view) {
-        String amount = edtAmount.getText().toString();
-        if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
-        }
+        String amount = normalizeAmount(edtAmount.getText().toString());
         DialogUtils.updateProgressDialog(getString(R.string.waiting_select_payment_method));
-        SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " $" + amount);
-
         currentCurrency = USD_TAG;
+        boolean shown = SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " $" + amount);
+        if (!shown) {
+            DialogUtils.dismissProgressDialog();
+            showMainScreenPaymentMethodDialog(amount);
+        }
 //        Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
 //        intent.putExtra("amount", edtAmount.getText().toString());
 //        intent.putExtra(CURRENCY_TAG, USD_TAG);
@@ -402,14 +467,14 @@ public class TransInitActivity extends BaseActivity {
     }
 
     public void onEUR(View view) {
-        String amount = edtAmount.getText().toString();
-        if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
-        }
-        amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        String amount = convertToEur(normalizeAmount(edtAmount.getText().toString()));
         DialogUtils.updateProgressDialog(getString(R.string.waiting_select_payment_method));
-        SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " €" + amount);
         currentCurrency = EUR_TAG;
+        boolean shown = SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_select_transmode, getString(R.string.sub_trans_amount) + " €" + amount);
+        if (!shown) {
+            DialogUtils.dismissProgressDialog();
+            showMainScreenPaymentMethodDialog(amount);
+        }
 //        Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
 //        intent.putExtra("amount", String.valueOf((int)(Integer.valueOf(edtAmount.getText().toString())/1.13)));
 //        intent.putExtra(CURRENCY_TAG, EUR_TAG);
@@ -417,45 +482,235 @@ public class TransInitActivity extends BaseActivity {
     }
 
     public void onCardTrans(View view) {
-        String amount = edtAmount.getText().toString();
-        if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
-        }
-        if (EUR_TAG == currentCurrency) {
-            amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        String amount = normalizeAmount(edtAmount.getText().toString());
+        if (EUR_TAG.equals(currentCurrency)) {
+            amount = convertToEur(amount);
         }
 
         DialogUtils.dismissProgressDialog();
 
-
+        if (!ensureTransactionReady()) {
+            return;
+        }
         Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
         intent.putExtra("amount", amount);
         intent.putExtra(CURRENCY_TAG, currentCurrency);
+        PaymentOrder.put(intent, currentOrder);
         TransInitActivity.this.startActivity(intent);
     }
 
     public void onQRTrans(View view) {
         TRANS_QR = true;
-        String amount = edtAmount.getText().toString();
-        if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
-        }
-        if (EUR_TAG == currentCurrency) {
-            amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        String amount = normalizeAmount(edtAmount.getText().toString());
+        if (EUR_TAG.equals(currentCurrency)) {
+            amount = convertToEur(amount);
         }
         DialogUtils.dismissProgressDialog();
 
+        startQrScanTransaction(amount);
+
+    }
+
+    private void startQrScanTransaction(String amount) {
+        if (!ensureTransactionReady()) {
+            TRANS_QR = false;
+            return;
+        }
         mAmount = amount;
+        ensureCurrentOrder(amount);
         IntentIntegrator integrator = new IntentIntegrator(TransInitActivity.this);
-        integrator.setCameraId(1);
         integrator.setBeepEnabled(false);
         integrator.setBarcodeImageEnabled(true);
         integrator.setCaptureActivity(ScanPaymentActivity.class);
         integrator.initiateScan();
+    }
 
+    private void startQrDisplayTransaction(String amount) {
+        if (!ensureTransactionReady()) {
+            TRANS_QR = false;
+            return;
+        }
+        mAmount = amount;
+        ensureCurrentOrder(amount);
+        Intent intent = new Intent(TransInitActivity.this, QrPaymentActivity.class);
+        intent.putExtra("amount", amount);
+        intent.putExtra(CURRENCY_TAG, currentCurrency);
+        PaymentOrder.put(intent, currentOrder);
+        TransInitActivity.this.startActivity(intent);
+    }
+
+    private void ensureCurrentOrder(String amount) {
+        if (currentOrder == null) {
+            currentOrder = PaymentOrder.fromContext(
+                    currentOrder,
+                    amount,
+                    currentCurrency,
+                    Utils.getCurrentTime2() + Utils.getRandomData(),
+                    Utils.getCurrentTime(),
+                    getString(R.string.label_demo_items));
+        } else {
+            if (TextUtils.isEmpty(currentOrder.orderNo)) {
+                currentOrder.orderNo = Utils.getCurrentTime2() + Utils.getRandomData();
+            }
+            if (TextUtils.isEmpty(currentOrder.orderTime)) {
+                currentOrder.orderTime = Utils.getCurrentTime();
+            }
+            if (TextUtils.isEmpty(currentOrder.orderInfo)) {
+                currentOrder.orderInfo = getString(R.string.label_demo_items);
+            }
+        }
     }
 
     public void showPic(View view) {
+    }
+
+    private String convertToEur(String amount) {
+        return new java.math.BigDecimal(amount)
+                .divide(new java.math.BigDecimal("1.13"), 2, java.math.RoundingMode.DOWN)
+                .toPlainString();
+    }
+
+    private void startCardTransaction(String amount) {
+        if (!ensureTransactionReady()) {
+            return;
+        }
+        Intent intent = new Intent(TransInitActivity.this, TransActivity.class);
+        intent.putExtra("amount", amount);
+        intent.putExtra(CURRENCY_TAG, currentCurrency);
+        PaymentOrder.put(intent, currentOrder);
+        TransInitActivity.this.startActivity(intent);
+    }
+
+    private void showMainScreenPaymentMethodDialog(String amount) {
+        Dialog dialog = new Dialog(TransInitActivity.this);
+        dialog.setContentView(R.layout.dialog_select_transmode);
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        TextView tvAmount = dialog.findViewById(R.id.tv_payment_method_amount);
+        LinearLayout llCard = dialog.findViewById(R.id.ll_payment_card);
+        LinearLayout llQr = dialog.findViewById(R.id.ll_payment_qr);
+        LinearLayout llQrDisplay = dialog.findViewById(R.id.ll_payment_qr_display);
+
+        tvAmount.setText((USD_TAG.equals(currentCurrency) ? "$" : "€") + amount);
+        llCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                startCardTransaction(amount);
+            }
+        });
+        llQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                TRANS_QR = true;
+                startQrScanTransaction(amount);
+            }
+        });
+        llQrDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                TRANS_QR = true;
+                startQrDisplayTransaction(amount);
+            }
+        });
+        dialog.show();
+        window = dialog.getWindow();
+        if (window != null) {
+            int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.94f);
+            window.setLayout(width, LinearLayout.LayoutParams.WRAP_CONTENT);
+        }
+    }
+
+    private void handlePaymentIntent(Intent intent) {
+        PaymentOrder order = PaymentOrder.fromIntent(intent);
+        if (order == null) {
+            currentOrder = null;
+            bindOrderSummary(null);
+            return;
+        }
+        currentOrder = order;
+        String currency = TextUtils.isEmpty(order.currency) ? USD_TAG : order.currency.toUpperCase(java.util.Locale.US);
+        currentCurrency = EUR_TAG.equals(currency) ? EUR_TAG : USD_TAG;
+        edtAmount.setText(order.amount);
+        edtAmount.setSelection(edtAmount.getText().length());
+        bindOrderSummary(order);
+        startPreferredPaymentIfRequested(order);
+    }
+
+    private void startPreferredPaymentIfRequested(PaymentOrder order) {
+        if (order == null || TextUtils.isEmpty(order.paymentMethod)) {
+            return;
+        }
+        String amount = normalizeAmount(order.amount);
+        if (ZERO_AMOUNT_TEXT.equals(amount)) {
+            return;
+        }
+        if ("CARD".equals(order.paymentMethod)) {
+            startCardTransaction(amount);
+        } else if ("QR_SCAN".equals(order.paymentMethod) || "SCAN".equals(order.paymentMethod)) {
+            TRANS_QR = true;
+            startQrScanTransaction(amount);
+        } else if ("QR_DISPLAY".equals(order.paymentMethod) || "QR_CODE".equals(order.paymentMethod)) {
+            TRANS_QR = true;
+            startQrDisplayTransaction(amount);
+        }
+    }
+
+    private void bindOrderSummary(PaymentOrder order) {
+        if (tvOrderBadge == null || tvOrderSummary == null || tvOrderAmount == null) {
+            return;
+        }
+        String amount = normalizeAmount(edtAmount == null ? "" : edtAmount.getText().toString());
+        String symbol = USD_TAG.equals(currentCurrency) ? "$" : "€";
+        if (order == null || !order.hasOrderInfo()) {
+            tvOrderBadge.setText(getString(R.string.label_demo_order_no));
+            tvOrderSummary.setText(getString(R.string.label_demo_items));
+            tvOrderAmount.setText(symbol + amount);
+            return;
+        }
+        tvOrderBadge.setText(TextUtils.isEmpty(order.orderNo) ? "External order" : "Order " + order.orderNo);
+        tvOrderSummary.setText(TextUtils.isEmpty(order.orderInfo) ? "External payment request" : order.orderInfo);
+        tvOrderAmount.setText(symbol + order.amount);
+    }
+
+    private boolean ensureTransactionReady() {
+        if (SharePreferenceUtils.getBoolean(TransInitActivity.this, KEY_INIT, false)) {
+            return true;
+        }
+        Toast.makeText(TransInitActivity.this, R.string.toast_trans_error, Toast.LENGTH_LONG).show();
+        if (!initing) {
+            initing = true;
+            DialogUtils.showAlertDialog(TransInitActivity.this, "", "", new DialogUtils.DialogCallback() {
+                @Override
+                public void onConfirm() {
+                    DialogUtils.dismissLoadingDialog();
+                }
+
+                @Override
+                public void onCancel() {
+                    DialogUtils.dismissLoadingDialog();
+                }
+            });
+        }
+        return false;
+    }
+
+    private boolean isSecondScreenModel() {
+        return "K1211".equals(Build.MODEL)
+                || "K1352".equals(Build.MODEL)
+                || "K1141".equals(Build.MODEL)
+                || "K1362".equals(Build.MODEL);
+    }
+
+    private boolean shouldUseSecondScreen() {
+        isExistSecScreen = SecondScreenUtils.isAvailable(TransInitActivity.this);
+        return isExistSecScreen;
     }
 
     @Override
@@ -475,7 +730,7 @@ public class TransInitActivity extends BaseActivity {
                 }
             });
         }
-        if (isExistSecScreen) {
+        if (shouldUseSecondScreen()) {
             idleTimer.start();
             CountDownTimer localTimer = new CountDownTimer(300, 100) {
                 @Override
@@ -504,23 +759,14 @@ public class TransInitActivity extends BaseActivity {
 
                                             switch (keyCode) {
                                                 case BUTTON_ENTER:
-                                                    if (TextUtils.isEmpty(amount)) {
-                                                        showZeroAmountWarning();
-                                                    } else if (PosUtils.strAmount2Long(amount) == 0) {
+                                                    amount = normalizeAmount(amount);
+                                                    if (ZERO_AMOUNT_TEXT.equals(amount)) {
                                                         showZeroAmountWarning();
                                                         break;
+                                                    } else if (!ensureTransactionReady()) {
+                                                        break;
                                                     } else {
-                                                        edtAmount.setText("");
-                                                        if (amount.contains(".")) {
-
-                                                            if (amount.charAt(amount.length() - 1) == '.') {
-                                                                amount = amount.substring(0, amount.length() - 1);
-                                                            }
-                                                        }
-                                                        Intent intent = new Intent(TransInitActivity.this, TransSelectActivity.class);
-                                                        intent.putExtra("amount", amount);
-                                                        intent.putExtra(CURRENCY_TAG, currentCurrency);
-                                                        TransInitActivity.this.startActivity(intent);
+                                                        startCardTransaction(amount);
                                                     }
                                                     break;
                                                 case BUTTON_0:
@@ -533,44 +779,17 @@ public class TransInitActivity extends BaseActivity {
                                                 case BUTTON_7:
                                                 case BUTTON_8:
                                                 case BUTTON_9:
-                                                    if (isZeroAmountWarningShowing) {
-                                                        isZeroAmountWarningShowing = false;
-                                                        amount = "";
-                                                    }
-                                                    if (amount.length() >= 13) {
-                                                        break;
-                                                    } else if (amount.contains(".")) {
-                                                        int charAfter = amount.length() - amount.indexOf('.') - 1;
-                                                        if (charAfter >= 2) {
-                                                            break;
-                                                        }
-                                                    }
-                                                    amount += String.valueOf(keyCode.getValue() - '0');
-                                                    edtAmount.setText(amount);
-                                                    edtAmount.setSelection(amount.length());
+                                                    appendAmountDigits(String.valueOf(keyCode.getValue() - '0'));
                                                     break;
                                                 case BUTTON_DOT:
-                                                    if (isZeroAmountWarningShowing) {
-                                                        isZeroAmountWarningShowing = false;
-                                                        amount = "0";
-                                                    }
-                                                    if (amount.isEmpty() || amount.contains(".")) {
-                                                        break;
-                                                    }
-                                                    amount += ".";
-                                                    edtAmount.setText(amount);
-                                                    edtAmount.setSelection(amount.length());
+                                                    appendAmountDigits("00");
                                                     break;
                                                 case BUTTON_ESC:
                                                     edtAmount.setText("");
                                                     SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_default);
                                                     break;
                                                 case BUTTON_BACKSPACE:
-                                                    if (!amount.isEmpty()) {
-                                                        amount = amount.substring(0, amount.length() - 1);
-                                                        edtAmount.setText(amount);
-                                                        edtAmount.setSelection(amount.length());
-                                                    }
+                                                    deleteLastAmountDigit();
                                                     break;
                                                 case BUTTON_FN:
                                                     //FUN KEY
@@ -633,23 +852,14 @@ public class TransInitActivity extends BaseActivity {
 
                                             switch (keyCode) {
                                                 case BUTTON_ENTER:
-                                                    if (TextUtils.isEmpty(amount)) {
-                                                        showZeroAmountWarning();
-                                                    } else if (PosUtils.strAmount2Long(amount) == 0) {
+                                                    amount = normalizeAmount(amount);
+                                                    if (ZERO_AMOUNT_TEXT.equals(amount)) {
                                                         showZeroAmountWarning();
                                                         break;
+                                                    } else if (!ensureTransactionReady()) {
+                                                        break;
                                                     } else {
-                                                        edtAmount.setText("");
-                                                        if (amount.contains(".")) {
-
-                                                            if (amount.charAt(amount.length() - 1) == '.') {
-                                                                amount = amount.substring(0, amount.length() - 1);
-                                                            }
-                                                        }
-                                                        Intent intent = new Intent(TransInitActivity.this, TransSelectActivity.class);
-                                                        intent.putExtra("amount", amount);
-                                                        intent.putExtra(CURRENCY_TAG, currentCurrency);
-                                                        TransInitActivity.this.startActivity(intent);
+                                                        startCardTransaction(amount);
                                                     }
                                                     break;
                                                 case BUTTON_0:
@@ -662,44 +872,17 @@ public class TransInitActivity extends BaseActivity {
                                                 case BUTTON_7:
                                                 case BUTTON_8:
                                                 case BUTTON_9:
-                                                    if (isZeroAmountWarningShowing) {
-                                                        isZeroAmountWarningShowing = false;
-                                                        amount = "";
-                                                    }
-                                                    if (amount.length() >= 13) {
-                                                        break;
-                                                    } else if (amount.contains(".")) {
-                                                        int charAfter = amount.length() - amount.indexOf('.') - 1;
-                                                        if (charAfter >= 2) {
-                                                            break;
-                                                        }
-                                                    }
-                                                    amount += String.valueOf(keyCode.getValue() - '0');
-                                                    edtAmount.setText(amount);
-                                                    edtAmount.setSelection(amount.length());
+                                                    appendAmountDigits(String.valueOf(keyCode.getValue() - '0'));
                                                     break;
                                                 case BUTTON_DOT:
-                                                    if (isZeroAmountWarningShowing) {
-                                                        isZeroAmountWarningShowing = false;
-                                                        amount = "0";
-                                                    }
-                                                    if (amount.isEmpty() || amount.contains(".")) {
-                                                        break;
-                                                    }
-                                                    amount += ".";
-                                                    edtAmount.setText(amount);
-                                                    edtAmount.setSelection(amount.length());
+                                                    appendAmountDigits("00");
                                                     break;
                                                 case BUTTON_ESC:
                                                     edtAmount.setText("");
                                                     SecondScreenUtils.showView(TransInitActivity.this, R.layout.second_default);
                                                     break;
                                                 case BUTTON_BACKSPACE:
-                                                    if (!amount.isEmpty()) {
-                                                        amount = amount.substring(0, amount.length() - 1);
-                                                        edtAmount.setText(amount);
-                                                        edtAmount.setSelection(amount.length());
-                                                    }
+                                                    deleteLastAmountDigit();
                                                     break;
                                                 case BUTTON_FN:
                                                     //FUN KEY
@@ -822,9 +1005,13 @@ public class TransInitActivity extends BaseActivity {
                     if (ret == 0) {
                         isComponenInit = true;
                         Toast.makeText(TransInitActivity.this, "ComponentEngine.init success", Toast.LENGTH_SHORT).show();
-                        ComponentEngine.INSTANCE.getSecondaryScreenManager().setBrightness(100);
+                        isExistSecScreen = SecondScreenUtils.isAvailable(TransInitActivity.this);
+                        if (isExistSecScreen) {
+                            ComponentEngine.INSTANCE.getSecondaryScreenManager().setBrightness(100);
+                        }
                     } else {
                         isComponenInit = false;
+                        isExistSecScreen = false;
                         Toast.makeText(TransInitActivity.this, "ComponentEngine.init failed errMsg:" + s, Toast.LENGTH_SHORT).show();
                     }
                 }

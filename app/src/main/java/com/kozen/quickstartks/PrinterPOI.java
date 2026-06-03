@@ -109,6 +109,7 @@ public class PrinterPOI {
         };
         if (state == 4) {
             printerManager.close();
+            printFinish.onError(state);
             return;
         }
         printerManager.beginPrint(listener);

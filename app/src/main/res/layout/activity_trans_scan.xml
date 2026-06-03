@@ -4,16 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_page_gradient"
+    android:background="@color/card_dark_mid"
     tools:ignore="MissingDefaultResource">
 
     <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/card_header_padding_horizontal"
+        android:paddingTop="@dimen/card_header_padding_vertical"
+        android:paddingRight="@dimen/card_header_padding_horizontal"
+        android:paddingBottom="@dimen/card_header_padding_vertical">
+
+        <TextView
+            android:layout_width="@dimen/pos_logo_size"
+            android:layout_height="@dimen/pos_logo_size"
+            android:background="@drawable/bg_logo_circle_light"
+            android:gravity="center"
+            android:text="@string/brand_logo_initial"
+            android:textColor="@color/card_dark_mid"
+            android:textSize="@dimen/pos_logo_text_size"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/brand_company"
+                android:textColor="@color/on_dark"
+                android:textSize="@dimen/pos_brand_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/header_secure_payment"
+                android:textColor="@color/on_dark_dim"
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_dark"
+            android:paddingLeft="@dimen/pos_chip_padding_horizontal"
+            android:paddingTop="@dimen/pos_chip_padding_vertical"
+            android:paddingRight="@dimen/pos_chip_padding_horizontal"
+            android:paddingBottom="@dimen/pos_chip_padding_vertical"
+            android:text="@string/sub_trans_pay_code"
+            android:textColor="@color/on_dark"
+            android:textSize="@dimen/pos_header_subtitle_text_size"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/title_block"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header"
+        android:layout_marginTop="@dimen/card_title_block_margin_top"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp">
 
         <TextView
             android:id="@+id/tvMessage1"
@@ -21,120 +82,202 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/sub_trans_qr"
-            android:textColor="@color/text_primary"
-            android:textSize="22sp"
+            android:textColor="@color/on_dark"
+            android:textSize="@dimen/card_title_text_size"
             android:textStyle="bold" />
 
-        <com.google.android.material.card.MaterialCardView
+        <TextView
+            android:id="@+id/tv_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#33FFD60A"
-            app:strokeWidth="1dp">
+            android:layout_marginTop="@dimen/card_amount_margin_top"
+            android:gravity="center"
+            android:textColor="@color/on_dark"
+            android:textSize="@dimen/card_amount_text_size"
+            android:textStyle="bold"
+            tools:text="$0.25" />
 
-            <com.kozen.quickstartks.NoTipDecoratedBarcodeView
-                android:id="@+id/zxing_barcode_scanner"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:tooltipText="ffff" />
-        </com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/card_subtitle_margin_top"
+            android:gravity="center"
+            android:text="@string/sub_trans_qr_tip"
+            android:textColor="@color/on_dark_dim"
+            android:textSize="@dimen/card_subtitle_text_size" />
+    </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/reader_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_cancel"
+        android:layout_marginLeft="@dimen/card_bottom_margin"
+        android:layout_marginRight="@dimen/card_bottom_margin"
+        android:layout_marginBottom="@dimen/card_reader_margin_bottom"
+        app:cardBackgroundColor="@color/card"
+        app:cardCornerRadius="@dimen/pos_card_corner_radius"
+        app:cardElevation="0dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="24dp"
-            app:cardBackgroundColor="@color/card"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#33FFD60A"
-            app:strokeWidth="1dp">
+            android:orientation="vertical"
+            android:padding="@dimen/card_reader_padding">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="@dimen/card_reader_icon_size"
+                    android:layout_height="@dimen/card_reader_icon_size"
+                    android:background="@drawable/bg_ring_core"
+                    android:gravity="center"
+                    android:text="+"
+                    android:textColor="@color/orange_solid"
+                    android:textSize="@dimen/card_reader_icon_text_size"
+                    android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="@dimen/card_reader_text_margin_start"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/trans_order_num"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tv_order_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="20240520111111"
+                        android:text="@string/sub_trans_code_tip2"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/trans_order_time"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tv_order_time"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2024-5-20 20:30:15"
-                        android:textColor="@color/text_primary"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginBottom="14dp"
-                    android:background="@color/divider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/trans_amount"
-                        android:textColor="@color/text_secondary"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/tv_amount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/text_primary"
-                        android:textSize="24sp"
+                        android:textSize="@dimen/card_reader_status_text_size"
                         android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sub_trans_qr_tip"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/card_reader_hint_text_size" />
                 </LinearLayout>
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/card_divider_margin_top"
+                android:layout_marginBottom="@dimen/card_divider_margin_bottom"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trans_order_num"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/card_meta_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_order_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/card_meta_text_size"
+                    tools:text="2026060227529917" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/card_meta_margin_top"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/trans_order_time"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/card_meta_text_size" />
+
+                <TextView
+                    android:id="@+id/tv_order_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/card_meta_text_size"
+                    tools:text="2026-06-02 19:35:06" />
+            </LinearLayout>
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/title_block"
+        android:layout_above="@+id/reader_card"
+        android:layout_marginLeft="@dimen/card_bottom_margin"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="@dimen/card_bottom_margin"
+        android:layout_marginBottom="14dp"
+        android:background="@drawable/bg_card_dark"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_scan_viewfinder"
+            android:padding="6dp">
+
+            <com.kozen.quickstartks.NoTipDecoratedBarcodeView
+                android:id="@+id/zxing_barcode_scanner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tv_switch_camera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_chip_dark"
+                android:paddingLeft="14dp"
+                android:paddingTop="8dp"
+                android:paddingRight="14dp"
+                android:paddingBottom="8dp"
+                android:text="@string/scan_switch_camera"
+                android:textColor="@color/on_dark"
+                android:textSize="@dimen/pos_header_subtitle_text_size"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_scan_camera_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:background="@drawable/bg_scan_hint"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingTop="16dp"
+                android:paddingRight="18dp"
+                android:paddingBottom="16dp"
+                android:text="@string/scan_camera_unavailable"
+                android:textColor="@color/orange_text"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
 
     <TextView
@@ -142,15 +285,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/blue_btn_light"
+        android:layout_marginStart="@dimen/card_bottom_margin"
+        android:layout_marginEnd="@dimen/card_bottom_margin"
+        android:layout_marginBottom="@dimen/card_cancel_margin_bottom"
+        android:background="@drawable/bg_chip_dark"
         android:gravity="center"
-        android:padding="15dp"
+        android:padding="@dimen/card_cancel_padding"
         android:text="@string/text_cancel"
         android:textAllCaps="false"
-        android:textColor="@color/text_primary"
-        android:textSize="16sp"
+        android:textColor="@color/on_dark"
+        android:textSize="@dimen/card_cancel_text_size"
         android:textStyle="bold" />
 </RelativeLayout>

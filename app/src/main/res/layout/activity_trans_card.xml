@@ -14,19 +14,19 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingTop="14dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="14dp">
+        android:paddingLeft="@dimen/card_header_padding_horizontal"
+        android:paddingTop="@dimen/card_header_padding_vertical"
+        android:paddingRight="@dimen/card_header_padding_horizontal"
+        android:paddingBottom="@dimen/card_header_padding_vertical">
 
         <TextView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="@dimen/pos_logo_size"
+            android:layout_height="@dimen/pos_logo_size"
             android:background="@drawable/bg_logo_circle_light"
             android:gravity="center"
             android:text="@string/brand_logo_initial"
             android:textColor="@color/card_dark_mid"
-            android:textSize="18sp"
+            android:textSize="@dimen/pos_logo_text_size"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/brand_company"
                 android:textColor="@color/on_dark"
-                android:textSize="16sp"
+                android:textSize="@dimen/pos_brand_text_size"
                 android:textStyle="bold" />
 
             <TextView
@@ -49,20 +49,20 @@
                 android:layout_height="wrap_content"
                 android:text="@string/header_card_reader"
                 android:textColor="@color/on_dark_dim"
-                android:textSize="12sp" />
+                android:textSize="@dimen/pos_header_subtitle_text_size" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_badge_dark"
-            android:paddingLeft="14dp"
-            android:paddingTop="8dp"
-            android:paddingRight="14dp"
-            android:paddingBottom="8dp"
+            android:paddingLeft="@dimen/pos_chip_padding_horizontal"
+            android:paddingTop="@dimen/pos_chip_padding_vertical"
+            android:paddingRight="@dimen/pos_chip_padding_horizontal"
+            android:paddingBottom="@dimen/pos_chip_padding_vertical"
             android:text="@string/badge_step_2"
             android:textColor="@color/on_dark"
-            android:textSize="12sp"
+            android:textSize="@dimen/pos_header_subtitle_text_size"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -72,7 +72,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="@dimen/card_title_block_margin_top"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -83,64 +83,64 @@
             android:gravity="center"
             android:text="@string/card_present_title"
             android:textColor="@color/on_dark"
-            android:textSize="24sp"
+            android:textSize="@dimen/card_title_text_size"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="@dimen/card_amount_margin_top"
             android:gravity="center"
             android:textColor="@color/on_dark"
-            android:textSize="44sp"
+            android:textSize="@dimen/card_amount_text_size"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="@dimen/card_subtitle_margin_top"
             android:gravity="center"
             android:text="@string/header_card_reader_subtitle"
             android:textColor="@color/on_dark_dim"
-            android:textSize="14sp" />
+            android:textSize="@dimen/card_subtitle_text_size" />
     </LinearLayout>
 
     <!-- Concentric tap-to-pay rings -->
     <FrameLayout
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="@dimen/card_ring_outer_size"
+        android:layout_height="@dimen/card_ring_outer_size"
         android:layout_below="@+id/title_block"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp">
+        android:layout_marginTop="@dimen/card_ring_margin_top">
 
         <View
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            android:layout_width="@dimen/card_ring_outer_size"
+            android:layout_height="@dimen/card_ring_outer_size"
             android:layout_gravity="center"
             android:background="@drawable/bg_ring1" />
 
         <View
-            android:layout_width="228dp"
-            android:layout_height="228dp"
+            android:layout_width="@dimen/card_ring_middle_size"
+            android:layout_height="@dimen/card_ring_middle_size"
             android:layout_gravity="center"
             android:background="@drawable/bg_ring2" />
 
         <View
-            android:layout_width="164dp"
-            android:layout_height="164dp"
+            android:layout_width="@dimen/card_ring_core_size"
+            android:layout_height="@dimen/card_ring_core_size"
             android:layout_gravity="center"
             android:background="@drawable/bg_ring_core" />
 
         <RelativeLayout
-            android:layout_width="104dp"
-            android:layout_height="104dp"
+            android:layout_width="@dimen/card_ring_inner_size"
+            android:layout_height="@dimen/card_ring_inner_size"
             android:layout_gravity="center"
             android:background="@drawable/bg_ring_inner">
 
             <ImageView
                 android:id="@+id/iv_present"
-                android:layout_width="58dp"
+                android:layout_width="@dimen/card_present_icon_width"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
@@ -150,7 +150,7 @@
 
             <ImageView
                 android:id="@+id/iv_present_hand"
-                android:layout_width="20dp"
+                android:layout_width="@dimen/card_present_hand_width"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:adjustViewBounds="true"
@@ -164,18 +164,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/tv_cancel"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="14dp"
+        android:layout_marginLeft="@dimen/card_bottom_margin"
+        android:layout_marginRight="@dimen/card_bottom_margin"
+        android:layout_marginBottom="@dimen/card_reader_margin_bottom"
         app:cardBackgroundColor="@color/card"
-        app:cardCornerRadius="28dp"
+        app:cardCornerRadius="@dimen/pos_card_corner_radius"
         app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="@dimen/card_reader_padding">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -184,36 +184,38 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="@dimen/card_reader_icon_size"
+                    android:layout_height="@dimen/card_reader_icon_size"
                     android:background="@drawable/bg_ring_core"
                     android:gravity="center"
                     android:text="+"
                     android:textColor="@color/orange_solid"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/card_reader_icon_text_size"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
+                    android:layout_marginStart="@dimen/card_reader_text_margin_start"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_reader_status"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/card_reading"
                         android:textColor="@color/text_primary"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/card_reader_status_text_size"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_reader_hint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/card_keep_close"
                         android:textColor="@color/text_secondary"
-                        android:textSize="13sp" />
+                        android:textSize="@dimen/card_reader_hint_text_size" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -221,14 +223,14 @@
                 android:id="@+id/ll_light"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/card_light_margin_top"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/iv1"
                     android:layout_width="wrap_content"
-                    android:layout_height="16dp"
+                    android:layout_height="@dimen/card_light_height"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
@@ -237,7 +239,7 @@
                 <ImageView
                     android:id="@+id/iv2"
                     android:layout_width="wrap_content"
-                    android:layout_height="16dp"
+                    android:layout_height="@dimen/card_light_height"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
@@ -246,7 +248,7 @@
                 <ImageView
                     android:id="@+id/iv3"
                     android:layout_width="wrap_content"
-                    android:layout_height="16dp"
+                    android:layout_height="@dimen/card_light_height"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
@@ -255,7 +257,7 @@
                 <ImageView
                     android:id="@+id/iv4"
                     android:layout_width="wrap_content"
-                    android:layout_height="16dp"
+                    android:layout_height="@dimen/card_light_height"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
                     android:scaleType="centerInside"
@@ -265,8 +267,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="14dp"
+                android:layout_marginTop="@dimen/card_divider_margin_top"
+                android:layout_marginBottom="@dimen/card_divider_margin_bottom"
                 android:background="@color/divider" />
 
             <LinearLayout
@@ -280,7 +282,7 @@
                     android:layout_weight="1"
                     android:text="@string/trans_order_num"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/card_meta_text_size" />
 
                 <TextView
                     android:id="@+id/tv_order_num"
@@ -288,13 +290,13 @@
                     android:layout_height="wrap_content"
                     android:text="20240520111111"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/card_meta_text_size" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="@dimen/card_meta_margin_top"
                 android:orientation="horizontal">
 
                 <TextView
@@ -303,7 +305,7 @@
                     android:layout_weight="1"
                     android:text="@string/trans_order_time"
                     android:textColor="@color/text_secondary"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/card_meta_text_size" />
 
                 <TextView
                     android:id="@+id/tv_order_time"
@@ -311,7 +313,7 @@
                     android:layout_height="wrap_content"
                     android:text="2024-5-20 20:30:15"
                     android:textColor="@color/text_primary"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/card_meta_text_size" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -321,15 +323,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="18dp"
+        android:layout_marginStart="@dimen/card_bottom_margin"
+        android:layout_marginEnd="@dimen/card_bottom_margin"
+        android:layout_marginBottom="@dimen/card_cancel_margin_bottom"
         android:background="@drawable/bg_chip_dark"
         android:gravity="center"
-        android:padding="16dp"
+        android:padding="@dimen/card_cancel_padding"
         android:text="@string/text_cancel"
         android:textAllCaps="false"
         android:textColor="@color/on_dark"
-        android:textSize="16sp"
+        android:textSize="@dimen/card_cancel_text_size"
         android:textStyle="bold" />
 </RelativeLayout>

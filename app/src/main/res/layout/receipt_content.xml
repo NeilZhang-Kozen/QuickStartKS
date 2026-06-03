@@ -98,6 +98,58 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row_receipt_order_no"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="ORDER NO."
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_order_no"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_receipt_order_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3px"
+            android:layout_marginBottom="3px"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="ORDER INFO"
+                android:textColor="#000000"
+                android:textSize="18px" />
+            <TextView
+                android:id="@+id/tv_receipt_order_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text=""
+                android:textColor="#000000"
+                android:textSize="18px" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3px"
@@ -148,6 +200,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row_receipt_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3px"
@@ -173,6 +226,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row_receipt_brand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3px"
@@ -198,6 +252,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row_receipt_expiry"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3px"
@@ -323,6 +378,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row_receipt_customer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="3px"
@@ -441,6 +497,7 @@
 
     <!-- Cardholder signature -->
     <TextView
+        android:id="@+id/tv_receipt_signature_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40px"
@@ -449,6 +506,7 @@
         android:textSize="18px" />
 
     <View
+        android:id="@+id/view_receipt_signature_line"
         android:layout_width="match_parent"
         android:layout_height="4px"
         android:layout_marginTop="6px"
@@ -456,6 +514,7 @@
         android:background="@drawable/bg_black_line2" />
 
     <TextView
+        android:id="@+id/tv_receipt_signature_ack"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="I ACKNOWLEDGE SATISFACTORY RECEIPT OF RELATIVE GOODS / SERVICES"

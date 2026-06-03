@@ -9,6 +9,7 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kozen.component.constant.KeyboardConstant;
 import com.kozen.component.keyboard.InputCallback;
@@ -41,6 +43,7 @@ public class TransResultActivity extends BaseActivity {
     private TextView tv_result_confirm;
     private View reslut_line;
     private SoundPool mSoundPool;
+    private boolean isPrinting = false;
 
     private ReceiptBuilder.ReceiptData receiptData;
 
@@ -55,6 +58,13 @@ public class TransResultActivity extends BaseActivity {
         int Card_Type = getIntent().getIntExtra(TransActivity.TransResult_Card_Type, 0);
         String amount = getIntent().getStringExtra(TransActivity.TransResult_Amount);
         String currency = getIntent().getStringExtra(Utils.CURRENCY_TAG);
+        PaymentOrder paymentOrder = PaymentOrder.get(getIntent());
+        if (amount == null) {
+            amount = "0.00";
+        }
+        if (currency == null) {
+            currency = USD_TAG;
+        }
         byte[] data = getIntent().getByteArrayExtra(TransActivity.TransResult_Data);
         ImageView imageView = findViewById(R.id.iv_result_image);
         reslut_line = findViewById(R.id.reslut_line);
@@ -99,9 +109,10 @@ public class TransResultActivity extends BaseActivity {
         }
 
         amount = (USD_TAG.equals(currency) ? "$" : "€") + amount;
-        receiptData = ReceiptBuilder.fromTransaction(cardNo, cardHolder, cardBrand, expiry, amount, "SALE");
+        receiptData = ReceiptBuilder.fromTransaction(cardNo, cardHolder, cardBrand, expiry, amount, "SALE", paymentOrder, false);
         bindReceiptViews(findViewById(android.R.id.content), receiptData);
         if (code == 0) {
+            PaymentCallbackDispatcher.dispatch(TransResultActivity.this, paymentOrder, "SUCCESS", "CARD", receiptData, "");
             playSound();
             if (TransInitActivity.isExistSecScreen) {
                 SecondScreenUtils.showView(TransResultActivity.this, R.layout.second_trans_result_success, amount);
@@ -115,71 +126,91 @@ public class TransResultActivity extends BaseActivity {
             tv_result_confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sl_receipt.scrollTo(0, 0);
-                    slideUp(content);
-//                String data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa";
-//                Printer.printImage(TransResultActivity.this, Printer.generateBitmap(TransResultActivity.this,data,"fonts/SBSansCondMonoRegular.ttf"));
-//                    Printer.printImage(TransResultActivity.this, layoutToBitmap(content), new Printer.PrintFinish() {
-//                    View viewBitmap = LayoutInflater.from(TransResultActivity.this).inflate(R.layout.receipt_content, null);
-                    if ("K1362".equals(Build.MODEL)){
+                    if (isPrinting) {
                         return;
                     }
+                    isPrinting = true;
+                    tv_result_confirm.setEnabled(false);
+                    sl_receipt.scrollTo(0, 0);
+                    slideUp(content);
+
+                    if ("K1362".equals(Build.MODEL)) {
+                        content.clearAnimation();
+                        finishPrinting();
+                        Toast.makeText(TransResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Bitmap receiptBitmap;
+                    try {
+                        receiptBitmap = layoutToBitmap(TransResultActivity.this);
+                    } catch (Exception e) {
+                        content.clearAnimation();
+                        finishPrinting();
+                        Toast.makeText(TransResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     if (TransInitActivity.isPOISdk) {
-                        PrinterPOI.printImage(TransResultActivity.this, layoutToBitmap(TransResultActivity.this), new PrinterPOI.PrintFinish() {
+                        PrinterPOI.printImage(TransResultActivity.this, receiptBitmap, new PrinterPOI.PrintFinish() {
                             @Override
                             public void onSuccess(String data) {
+                                content.clearAnimation();
+                                finishPrinting();
                             }
 
                             @Override
                             public void onError(int errorCode) {
                                 content.clearAnimation();
+                                finishPrinting();
                                 if (POIPrinterManager.ERROR_NO_PAPER == errorCode) {
                                     DialogUtils.showAlertDialogCenter(TransResultActivity.this, new DialogUtils.DialogCallback() {
                                         @Override
                                         public void onConfirm() {
-
                                         }
 
                                         @Override
                                         public void onCancel() {
-
                                         }
                                     });
+                                } else {
+                                    Toast.makeText(TransResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
                                 }
-
                             }
                         });
                     } else {
-                        Printer.printImage(TransResultActivity.this, layoutToBitmap(TransResultActivity.this), new Printer.PrintFinish() {
+                        Printer.printImage(TransResultActivity.this, receiptBitmap, new Printer.PrintFinish() {
                             @Override
                             public void onSuccess(String data) {
+                                content.clearAnimation();
+                                finishPrinting();
                             }
 
                             @Override
                             public void onError(int errorCode) {
                                 content.clearAnimation();
+                                finishPrinting();
                                 if (PrinterError.PRINTER_ERROR_NO_PAPER == errorCode) {
                                     DialogUtils.showAlertDialogCenter(TransResultActivity.this, new DialogUtils.DialogCallback() {
                                         @Override
                                         public void onConfirm() {
-
                                         }
 
                                         @Override
                                         public void onCancel() {
-
                                         }
                                     });
+                                } else {
+                                    Toast.makeText(TransResultActivity.this, R.string.toast_trans_error, Toast.LENGTH_SHORT).show();
                                 }
-
                             }
                         });
                     }
-
                 }
             });
 
         } else if (code == -1) {
+            PaymentCallbackDispatcher.dispatch(TransResultActivity.this, paymentOrder, "FAILED", "CARD", receiptData, getString(R.string.trans_result_failed));
             if (TransInitActivity.isExistSecScreen) {
                 SecondScreenUtils.showView(TransResultActivity.this, R.layout.second_trans_result_failed, amount);
             }
@@ -190,6 +221,7 @@ public class TransResultActivity extends BaseActivity {
             tv_result.setText(getString(R.string.trans_result_failed));
             imageView.setImageResource(R.drawable.result_fail);
         } else if (code == 1) {
+            PaymentCallbackDispatcher.dispatch(TransResultActivity.this, paymentOrder, "TIMEOUT", "CARD", receiptData, getString(R.string.trans_result_timeout));
             if (TransInitActivity.isExistSecScreen) {
                 SecondScreenUtils.showView(TransResultActivity.this, R.layout.second_trans_result_timeout, amount);
             }
@@ -329,6 +361,13 @@ public class TransResultActivity extends BaseActivity {
         view.startAnimation(animate);
     }
 
+    private void finishPrinting() {
+        isPrinting = false;
+        if (tv_result_confirm != null) {
+            tv_result_confirm.setEnabled(true);
+        }
+    }
+
     private void playSound() {
 
 // 1. 初始化SoundPool（Android 21+）
@@ -387,6 +426,8 @@ public class TransResultActivity extends BaseActivity {
         setText(root, R.id.tv_receipt_mid, d.mid);
         setText(root, R.id.tv_receipt_tid, d.tid);
         setText(root, R.id.tv_receipt_operator, d.operatorNo);
+        setText(root, R.id.tv_receipt_order_no, d.orderNo);
+        setText(root, R.id.tv_receipt_order_info, d.orderInfo);
         setText(root, R.id.tv_receipt_card, d.cardNo);
         setText(root, R.id.tv_receipt_brand, d.cardBrand);
         setText(root, R.id.tv_receipt_expiry, d.expiry);
@@ -398,12 +439,29 @@ public class TransResultActivity extends BaseActivity {
         setText(root, R.id.tv_receipt_datetime, d.dateTime);
         setText(root, R.id.tv_receipt_amount, d.amount);
         setText(root, R.id.tv_receipt_total, d.amount);
+        setText(root, R.id.tv_receipt_barcode_num, TextUtils.isEmpty(d.orderNo) ? d.refNo : d.orderNo);
+        setVisible(root, R.id.row_receipt_order_no, !TextUtils.isEmpty(d.orderNo));
+        setVisible(root, R.id.row_receipt_order_info, !TextUtils.isEmpty(d.orderInfo));
+        setVisible(root, R.id.row_receipt_card, !d.qrPayment && !TextUtils.isEmpty(d.cardNo));
+        setVisible(root, R.id.row_receipt_brand, !d.qrPayment && !TextUtils.isEmpty(d.cardBrand));
+        setVisible(root, R.id.row_receipt_expiry, !d.qrPayment && !TextUtils.isEmpty(d.expiry));
+        setVisible(root, R.id.row_receipt_customer, !d.qrPayment && !TextUtils.isEmpty(d.cardHolder));
+        setVisible(root, R.id.tv_receipt_signature_label, !d.qrPayment);
+        setVisible(root, R.id.view_receipt_signature_line, !d.qrPayment);
+        setVisible(root, R.id.tv_receipt_signature_ack, !d.qrPayment);
     }
 
     private static void setText(View root, int id, String text) {
         View v = root.findViewById(id);
         if (v instanceof TextView) {
             ((TextView) v).setText(text == null ? "" : text);
+        }
+    }
+
+    private static void setVisible(View root, int id, boolean visible) {
+        View v = root.findViewById(id);
+        if (v != null) {
+            v.setVisibility(visible ? View.VISIBLE : View.GONE);
         }
     }
 

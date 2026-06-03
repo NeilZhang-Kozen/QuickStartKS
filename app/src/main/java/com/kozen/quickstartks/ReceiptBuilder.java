@@ -45,6 +45,9 @@ public class ReceiptBuilder {
         public String transType = "SALE";
         public String amount = "";
         public String dateTime = "";
+        public String orderNo = "";
+        public String orderInfo = "";
+        public boolean qrPayment = false;
     }
 
     /**
@@ -79,6 +82,21 @@ public class ReceiptBuilder {
         return d;
     }
 
+    public static ReceiptData fromTransaction(String cardNo, String cardHolder, String cardBrand,
+                                              String expiry, String amountWithSymbol, String transType,
+                                              PaymentOrder order, boolean qrPayment) {
+        ReceiptData d = fromTransaction(cardNo, cardHolder, cardBrand, expiry, amountWithSymbol, transType);
+        d.qrPayment = qrPayment;
+        if (order != null) {
+            d.orderNo = safe(order.orderNo);
+            d.orderInfo = safe(order.orderInfo);
+            if (!TextUtils.isEmpty(order.orderTime)) {
+                d.dateTime = order.orderTime;
+            }
+        }
+        return d;
+    }
+
     public static View build(Context ctx, ReceiptData d) {
         LinearLayout root = new LinearLayout(ctx);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -94,9 +112,13 @@ public class ReceiptBuilder {
         addRow(root, ctx, "MERCHAN T NO.", d.mid);
         addRow(root, ctx, "TERMINAL NO.", d.tid);
         addRow(root, ctx, "OPERATOR NO.", d.operatorNo);
-        addRow(root, ctx, "CARD NO.", d.cardNo);
-        addRow(root, ctx, "CARD TYPE", d.cardBrand);
-        addRow(root, ctx, "EXPIRY DATE", d.expiry);
+        addRow(root, ctx, "ORDER NO.", d.orderNo);
+        addRow(root, ctx, "ORDER INFO", d.orderInfo);
+        if (!d.qrPayment) {
+            addRow(root, ctx, "CARD NO.", d.cardNo);
+            addRow(root, ctx, "CARD TYPE", d.cardBrand);
+            addRow(root, ctx, "EXPIRY DATE", d.expiry);
+        }
         addRow(root, ctx, "BATCH NO.", d.batchNo);
         addRow(root, ctx, "VOUCHER NO.", d.voucherNo);
         addRow(root, ctx, "REF NO.", d.refNo);
@@ -107,14 +129,16 @@ public class ReceiptBuilder {
         root.addView(amountRow(ctx, "AMOUNT", d.amount));
         root.addView(divider(ctx));
 
-        TextView sign = left(ctx, "CARDHOLDER SIGNATURE", 20, false);
-        ((LinearLayout.LayoutParams) sign.getLayoutParams()).topMargin = 56;
-        root.addView(sign);
-        root.addView(divider(ctx));
+        if (!d.qrPayment) {
+            TextView sign = left(ctx, "CARDHOLDER SIGNATURE", 20, false);
+            ((LinearLayout.LayoutParams) sign.getLayoutParams()).topMargin = 56;
+            root.addView(sign);
+            root.addView(divider(ctx));
 
-        TextView disclaimer = left(ctx,
-                "I ACKNOWLEDGE SATISFACTORY RECEIPT OF RELATIVE GOODS / SERVICES", 18, false);
-        root.addView(disclaimer);
+            TextView disclaimer = left(ctx,
+                    "I ACKNOWLEDGE SATISFACTORY RECEIPT OF RELATIVE GOODS / SERVICES", 18, false);
+            root.addView(disclaimer);
+        }
 
         TextView thanks = center(ctx, "THANK YOU", 20, true);
         ((LinearLayout.LayoutParams) thanks.getLayoutParams()).topMargin = 24;

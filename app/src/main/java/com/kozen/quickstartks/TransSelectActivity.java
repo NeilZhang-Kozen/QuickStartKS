@@ -50,10 +50,10 @@ public class TransSelectActivity extends BaseActivity {
 
     public void onCardTrans(View view) {
         if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
+            amount = "1500.00";
         }
-        if (EUR_TAG == currentCurrency) {
-            amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        if (EUR_TAG.equals(currentCurrency)) {
+            amount = convertToEur(amount);
         }
 
         Intent intent = new Intent(TransSelectActivity.this, TransActivity.class);
@@ -66,10 +66,10 @@ public class TransSelectActivity extends BaseActivity {
     public void onQRTrans(View view) {
         TRANS_QR = true;
         if (TextUtils.isEmpty(amount)) {
-            amount = "1500";
+            amount = "1500.00";
         }
-        if (EUR_TAG == currentCurrency) {
-            amount = String.valueOf((int) (Integer.valueOf(amount) / 1.13));
+        if (EUR_TAG.equals(currentCurrency)) {
+            amount = convertToEur(amount);
         }
         Intent intent = new Intent(TransSelectActivity.this, QrPaymentActivity.class);
         intent.putExtra("amount", amount);
@@ -77,6 +77,12 @@ public class TransSelectActivity extends BaseActivity {
         TransSelectActivity.this.startActivity(intent);
         finish();
 
+    }
+
+    private String convertToEur(String value) {
+        return new java.math.BigDecimal(value)
+                .divide(new java.math.BigDecimal("1.13"), 2, java.math.RoundingMode.DOWN)
+                .toPlainString();
     }
 
 }
